@@ -3,7 +3,7 @@ import * as React from 'react';
 import {Divider, FormControlLabel, IconButton, Paper, TextField} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Button from "@mui/material/Button";
-import {Get_Json, CallFileAction} from "@/app/api/route";
+import {CallFileAction} from "@/app/api/route";
 import Checkbox from "@mui/material/Checkbox";
 
 interface Answer {
@@ -25,12 +25,13 @@ function FileList({filesize}: FileSizeArray) {
 
     return (
         filesize.map((file_size) => (
-            <div>
-                <p key={file_size.file_full_path}>
+            <div key={crypto.randomUUID()}>
+                <p key={crypto.randomUUID()}>
                     {file_size.file_full_path} {file_size.file_size}
                 </p>
-                <Divider/>
-                <Button onClick={()=> {
+                <Divider key={crypto.randomUUID()}/>
+                <Button key={crypto.randomUUID()}
+                    onClick={()=> {
                     CallFileAction(file_size.file_full_path, "open_file", false).then((value)=>{
                         console.log(value)
                     })
@@ -60,8 +61,8 @@ export default function FileSizeList() {
                 <Checkbox defaultChecked={true} value="Recursively" onChange={(v)=>setIsRecursively(v.target.checked)}/>
             } label="Recursively">
             </FormControlLabel>
-            <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">
-                <SearchIcon onClick={()=> {
+            <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions"
+                onClick={()=> {
                     CallFileAction(path, "get_file_size_list", isRecursively).then(value => {
                         const resp_content : Answer = JSON.parse(value)
                         setTotalSize(resp_content.total_size)
@@ -76,7 +77,8 @@ export default function FileSizeList() {
                             setFileArray(current => [...current, filesize])
                         }
                         console.log(fileArray)
-                    })}}/>
+                    })}}>
+                <SearchIcon />
             </IconButton>
             <p>Total Size: {totalSize}</p>
             <FileList filesize={fileArray}/>
