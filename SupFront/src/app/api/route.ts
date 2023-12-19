@@ -30,7 +30,10 @@ export async function Get_Json(): Promise<string> {
 }
 
 export async function CallFileAction(path: string, action: string, is_recursively: boolean): Promise<string> {
-    const res = await fetch('http://127.0.0.1:8133/file?path=' + path + "&action=" + action + "&recursively=" + is_recursively, {
+    let path_param = encodeURIComponent(path)
+    let call_file_url = encodeURI('http://127.0.0.1:8133/file?path=' + path_param + "&action=" + action + "&recursively=" + is_recursively)
+    console.log(call_file_url)
+    const res = await fetch(call_file_url, {
         headers: {
             "Content-Type": "text/json"
         },
@@ -38,8 +41,8 @@ export async function CallFileAction(path: string, action: string, is_recursivel
         cache: "no-cache",
     })
     // console.log(res)
-    const data = await res.text()
-    // console.log(data)
+    const data_text = await res.text()
+    console.log(data_text)
 
-    return data
+    return data_text
 }

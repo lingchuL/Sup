@@ -176,7 +176,6 @@ export default function Dashboard() {
                                         height: 240,
                                     }}
                                 >
-                                    <AlertDialog />
                                 </Paper>
                             </Grid>
                             {/* Recent Deposits */}
@@ -194,6 +193,7 @@ export default function Dashboard() {
                             {/* Recent Orders */}
                             <Grid item xs={12}>
                                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                                    <AlertDialog />
                                 </Paper>
                             </Grid>
                         </Grid>
