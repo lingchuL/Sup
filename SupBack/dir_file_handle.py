@@ -46,7 +46,7 @@ class DirHandler(object):
 		if not os.path.isfile(file_full_path):
 			return
 
-		os.system(f"explorer /n,/select,{file_full_path}")
+		os.system(f"explorer /n,/select,\"{file_full_path}\"")
 
 	@staticmethod
 	def sort_dict_by_value(in_dict, is_high_to_low=True) -> list:

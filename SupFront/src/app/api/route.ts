@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic' // defaults to force-static
 export async function GET() {
-    const res = await fetch('http://127.0.0.1:8080/login', {
+    const res = await fetch('http://127.0.0.1:8133/login', {
         headers: {
             "Content-Type": "text/plain"
         },
@@ -15,7 +15,7 @@ export async function GET() {
 }
 
 export async function Get_Json(): Promise<string> {
-    const res = await fetch('http://127.0.0.1:8080/login?id=1000', {
+    const res = await fetch('http://127.0.0.1:8133/login?id=1000', {
         headers: {
             "Content-Type": "text/json"
         },
@@ -30,7 +30,7 @@ export async function Get_Json(): Promise<string> {
 }
 
 export async function CallFileAction(path: string, action: string, is_recursively: boolean): Promise<string> {
-    const res = await fetch('http://127.0.0.1:8080/file?path=' + path + "&action=" + action + "&recursively=" + is_recursively, {
+    const res = await fetch('http://127.0.0.1:8133/file?path=' + path + "&action=" + action + "&recursively=" + is_recursively, {
         headers: {
             "Content-Type": "text/json"
         },
