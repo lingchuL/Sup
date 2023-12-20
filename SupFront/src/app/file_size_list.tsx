@@ -5,6 +5,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Button from "@mui/material/Button";
 import {CallFileAction} from "@/app/api/route";
 import Checkbox from "@mui/material/Checkbox";
+import Grid from "@mui/material/Grid";
 
 interface Answer {
     answer: FileSize[]
@@ -25,7 +26,7 @@ function FileList({filesize}: FileSizeArray) {
 
     return (
         filesize.map((file_size) => (
-            <div key={crypto.randomUUID()}>
+            <Grid key={crypto.randomUUID()} container direction="row">
                 <p key={crypto.randomUUID()}>
                     {file_size.file_full_path} {file_size.file_size}
                 </p>
@@ -38,7 +39,7 @@ function FileList({filesize}: FileSizeArray) {
                 }}>
                     Open
                 </Button>
-            </div>
+            </Grid>
         ))
     )
 }
