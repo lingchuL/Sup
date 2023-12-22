@@ -3,7 +3,7 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import {Get_Json} from "@/app/api/route";
 import {Dialog} from "@mui/material";
-import FileSizeList from "@/app/file_size_list";
+import FileSizeList from "@/app/main/file_size_list";
 
 interface Answer {
     answer: string;

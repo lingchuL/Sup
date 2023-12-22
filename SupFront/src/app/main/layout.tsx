@@ -18,8 +18,9 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
-import AlertDialog from "@/app/AlertDialog";
+import { secondaryListItems } from './sidebar';
+import AlertDialog from "@/app/main/AlertDialog";
+import MainItems from "@/app/main/mainItems";
 
 function Copyright(props: any) {
     return (
@@ -87,7 +88,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Dashboard() {
+export default function MainLayout({
+                                       children
+                                   }: {
+    children: React.ReactNode
+}) {
     const [open, setOpen] = React.useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -146,60 +151,12 @@ export default function Dashboard() {
                     </Toolbar>
                     <Divider />
                     <List component="nav">
-                        {mainListItems}
+                        <MainItems />
                         <Divider sx={{ my: 1 }} />
                         {secondaryListItems}
                     </List>
                 </Drawer>
-                <Box
-                    component="main"
-                    sx={{
-                        backgroundColor: (theme) =>
-                            theme.palette.mode === 'light'
-                                ? theme.palette.grey[100]
-                                : theme.palette.grey[900],
-                        flexGrow: 1,
-                        height: '100vh',
-                        overflow: 'auto',
-                    }}
-                >
-                    <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                        <Grid container spacing={3}>
-                            {/* Chart */}
-                            <Grid item xs={12} md={8} lg={9}>
-                                <Paper
-                                    sx={{
-                                        p: 2,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        height: 240,
-                                    }}
-                                >
-                                </Paper>
-                            </Grid>
-                            {/* Recent Deposits */}
-                            <Grid item xs={12} md={4} lg={3}>
-                                <Paper
-                                    sx={{
-                                        p: 2,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        height: 240,
-                                    }}
-                                >
-                                </Paper>
-                            </Grid>
-                            {/* Recent Orders */}
-                            <Grid item xs={12}>
-                                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    <AlertDialog />
-                                </Paper>
-                            </Grid>
-                        </Grid>
-                        <Copyright sx={{ pt: 4 }} />
-                    </Container>
-                </Box>
+                {children}
             </Box>
         </ThemeProvider>
     );
