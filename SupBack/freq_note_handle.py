@@ -59,7 +59,7 @@ class FreqNoteTrans(object):
 		print(f"FreqNoteTrans get_index_note 音高索引{in_index}未找到对应音名")
 		return ""
 
-	def get_near_note(self, in_freq):
+	def get_near_note(self, in_freq: float):
 		freq_times = in_freq / self.standard_freq
 		note_interval = round(math.log(freq_times, math.pow(2, 1 / 12)))
 

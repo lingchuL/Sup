@@ -18,9 +18,15 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AlertDialog from "@/app/main/AlertDialog";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import {Get_Json} from "@/app/api/route";
-import {Dialog} from "@mui/material";
+import {Get_Json, TransNoteFreq} from "@/app/api/route";
+import {Dialog, TextField} from "@mui/material";
 import FileSizeList from "@/app/main/file_size_list";
+import {useState} from "react";
+
+interface NoteFreq {
+    note: string;
+    freq: string
+}
 
 function Copyright(props: any) {
     return (
@@ -36,6 +42,9 @@ function Copyright(props: any) {
 }
 
 export default function Dashboard() {
+    const [note, setNote] = useState("A4")
+    const [freq, setFreq] = useState("")
+
     return (
         <Box
             component="main"
@@ -63,12 +72,24 @@ export default function Dashboard() {
                             }}
                         >
                             <React.Fragment>
+                                <TextField variant="outlined" value={note} onChange={(v) => setNote(v.target.value)
+                                }>
+                                </TextField>
+                                <TextField variant="outlined" value={freq} onChange={(v) => setFreq(v.target.value)
+                                }>
+                                </TextField>
                                 <Button
                                     variant="outlined"
                                     onClick={()=> {
-                                        console.log("clicked!")
-                                    }
-                                    }>
+                                        TransNoteFreq(note, freq).then(value => {
+                                            const text = value
+                                            console.log(text)
+                                            const note_freq: NoteFreq = JSON.parse(text);
+                                            console.log(note_freq)
+                                            setNote(note_freq.note)
+                                            setFreq(note_freq.freq)
+                                        })
+                                    }}>
                                     Freq
                                 </Button>
                             </React.Fragment>

@@ -8,6 +8,7 @@ from flask import Flask, request, Response
 from flask_cors import CORS
 
 from dir_file_handle import DirHandler
+from freq_note_handle import FreqNoteTrans
 
 app = Flask(__name__)
 CORS(app)
@@ -70,6 +71,42 @@ def get_file_size_list():
 		dir_handler = DirHandler()
 		resp_dict = dir_handler.list_file_in_size_order(path_param, is_recursively)
 		resp = Response(json.dumps(resp_dict))
+		resp.headers['Access-Control-Allow-Origin'] = '*'
+		return resp
+
+	resp = Response(json.dumps({"answer": "none", "status": "-1"}))
+	resp.headers['Access-Control-Allow-Origin'] = '*'
+	return resp
+
+
+@app.route('/note', methods=["GET"])
+def trans_note_freq():
+	note_param_encoded = request.args.get("note")
+	note_param = unquote(note_param_encoded)
+	print(f"trans_note_freq 得到音高 note_param: {note_param}")
+
+	freq_parm_encoded = request.args.get("freq")
+	freq_parm = unquote(freq_parm_encoded)
+	print(f"trans_note_freq 得到频率 freq_param: {freq_parm}")
+
+	if note_param in ["", None] and freq_parm in ["", None]:
+		resp = Response(json.dumps({"answer": "missing_path", "status": "-1"}))
+		resp.headers['Access-Control-Allow-Origin'] = '*'
+		return resp
+
+	freq_note_trans = FreqNoteTrans()
+
+	if freq_parm in ["", None]:
+		freq = freq_note_trans.get_note_freq(note_param)
+
+		resp = Response(json.dumps({"note": note_param, "freq": str(freq)}))
+		resp.headers['Access-Control-Allow-Origin'] = '*'
+		return resp
+
+	if note_param in ["", None]:
+		note = freq_note_trans.get_near_note(float(freq_parm))
+
+		resp = Response(json.dumps({"note": note, "freq": freq_parm}))
 		resp.headers['Access-Control-Allow-Origin'] = '*'
 		return resp
 

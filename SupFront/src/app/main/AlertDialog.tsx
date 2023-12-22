@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import {Get_Json} from "@/app/api/route";
 import {Dialog} from "@mui/material";
 import FileSizeList from "@/app/main/file_size_list";
+import {useEffect} from "react";
 
 interface Answer {
     answer: string;
