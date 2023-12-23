@@ -29,9 +29,13 @@ export async function Get_Json(): Promise<string> {
     return data
 }
 
-export async function CallFileAction(path: string, action: string, is_recursively: boolean): Promise<string> {
-    let path_param = encodeURIComponent(path)
-    let call_file_url = encodeURI('http://127.0.0.1:8133/file?path=' + path_param + "&action=" + action + "&recursively=" + is_recursively)
+export async function CallFileAction(params: Map<string, string>): Promise<string> {
+    let url_param = ""
+    params.forEach(function(value, key) {
+        url_param += "&" + key + "=" + value
+    })
+    let call_file_url = encodeURI('http://127.0.0.1:8133/file?' + url_param)
+
     console.log(call_file_url)
     const res = await fetch(call_file_url, {
         headers: {

@@ -11,6 +11,9 @@ class DirHandler(object):
 
 		self.file_size_dict = {}
 
+		self.last_load_path = ""
+		self.last_is_recursively = False
+
 	@staticmethod
 	def is_same_path(a_path, b_path):
 		return os.path.abspath(a_path) == os.path.abspath(b_path)
@@ -53,21 +56,31 @@ class DirHandler(object):
 		return sorted(in_dict.items(), key=lambda kv: (kv[1], kv[0]), reverse=is_high_to_low)
 
 	def load_file_size_dict(self, is_recursively=False):
+		if self.last_load_path == self.dir_path and self.last_is_recursively == is_recursively:
+			return
+
 		for file_full_path in self.get_all_files_full_path(self.dir_path, is_recursively):
 			# self.file_size_dict[file_full_path] = self.get_readable_size(os.path.getsize(file_full_path))
 			self.file_size_dict[file_full_path] = os.path.getsize(file_full_path)
 
-	def list_file_in_size_order(self, in_dir: str, is_recursively=True, is_high_to_low=True):
+	def list_file_in_size_order(self, in_dir: str, search_name, is_recursively=True, is_high_to_low=True):
 		print(is_recursively)
 		self.dir_path = in_dir.strip()
 		if self.dir_path == "":
 			return
 
+		is_search = False if search_name == "" else True
+
+		# 加载所有文件大小
 		self.load_file_size_dict(is_recursively)
 
 		sorted_file_list = []
 		total_size = 0
 		for file_size_tuple in self.sort_dict_by_value(self.file_size_dict, is_high_to_low):
+			# 过滤出搜索项
+			if is_search and search_name not in file_size_tuple[0]:
+				continue
+
 			total_size += file_size_tuple[1]
 			sorted_file_list.append(
 				{"file_full_path": file_size_tuple[0], "file_size": self.get_readable_size(file_size_tuple[1])})
