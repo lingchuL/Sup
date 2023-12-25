@@ -59,12 +59,16 @@ class DirHandler(object):
 		if self.last_load_path == self.dir_path and self.last_is_recursively == is_recursively:
 			return
 
+		self.last_load_path = self.dir_path
+		self.last_is_recursively = is_recursively
+		self.file_size_dict.clear()
+
 		for file_full_path in self.get_all_files_full_path(self.dir_path, is_recursively):
 			# self.file_size_dict[file_full_path] = self.get_readable_size(os.path.getsize(file_full_path))
 			self.file_size_dict[file_full_path] = os.path.getsize(file_full_path)
 
-	def list_file_in_size_order(self, in_dir: str, search_name, is_recursively=True, is_high_to_low=True):
-		print(is_recursively)
+	def list_file_in_size_order(self, in_dir: str, search_name: str, is_recursively=True, is_high_to_low=True):
+		# print(is_recursively)
 		self.dir_path = in_dir.strip()
 		if self.dir_path == "":
 			return
@@ -78,7 +82,7 @@ class DirHandler(object):
 		total_size = 0
 		for file_size_tuple in self.sort_dict_by_value(self.file_size_dict, is_high_to_low):
 			# 过滤出搜索项
-			if is_search and search_name not in file_size_tuple[0]:
+			if is_search and (search_name not in file_size_tuple[0]):
 				continue
 
 			total_size += file_size_tuple[1]

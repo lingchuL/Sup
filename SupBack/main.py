@@ -72,7 +72,7 @@ def get_file_size_list():
 			is_recursively_param = True
 		is_recursively = (is_recursively_param in ["true", "True", "1"])
 
-		resp_dict = dir_file_handler.list_file_in_size_order(path_param, is_recursively)
+		resp_dict = dir_file_handler.list_file_in_size_order(path_param, "", is_recursively)
 		resp = Response(json.dumps(resp_dict))
 		resp.headers['Access-Control-Allow-Origin'] = '*'
 		return resp
