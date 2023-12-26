@@ -28,7 +28,7 @@ export default function MainItems() {
                 </ListItemIcon>
                 <ListItemText primary="Orders"/>
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={() => router.push("/main/config")}>
                 <ListItemIcon>
                     <PeopleIcon/>
                 </ListItemIcon>
