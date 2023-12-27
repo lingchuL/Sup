@@ -137,9 +137,9 @@ class BlockConfigHandler(object):
 			return
 		sub_cfg_dict = sub_state_dict_template
 		sub_cfg_dict["name"] = in_name
-		sub_cfg_dict["conditions"][0]["methodName"] = "CheckAxis"
-		sub_cfg_dict["conditions"][0]["parameters"] = "y < 136"
-		sub_cfg_dict["results"][0]["resultValue"]["stringValue"] = "BGM_Scene_BelowWorld"
+		sub_cfg_dict["conditions"][0]["methodName"] = "CheckInAABB"
+		sub_cfg_dict["conditions"][0]["parameters"] = "571,53,-802,631,85,-755"
+		sub_cfg_dict["results"][0]["resultValue"]["stringValue"] = "BGM_Scene_AbandonedBuilding"
 
 		self.bgm_cfg_dict["root"]["subStates"].append(sub_cfg_dict)
 		# self.env_cfg_dict[]
@@ -183,6 +183,6 @@ class BlockConfigHandler(object):
 
 if __name__ == "__main__":
 	block_cfg_handler = BlockConfigHandler()
-	block_cfg_handler.load_env_tree(r"E:\Workflow\Block-wangjunyi.42-trunk", "JungoWorld")
-	block_cfg_handler.add_bgm_sub_states("BelowWorld")
+	block_cfg_handler.load_env_tree(r"E:\Workflow\Block-wangjunyi.42-trunk", "JungoTownRP")
+	block_cfg_handler.add_bgm_sub_states("AbandonedBuilding")
 	block_cfg_handler.save_env_tree()

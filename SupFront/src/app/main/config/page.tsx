@@ -8,9 +8,14 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import Toolbar from "@mui/material/Toolbar";
-import {Chip, ListItem, Stack} from "@mui/material";
+import {Chip, Collapse, ListItem, Stack} from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
 import Button from "@mui/material/Button";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListSubheader from "@mui/material/ListSubheader";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import {ExpandLess, ExpandMore} from "@mui/icons-material";
+import List from "@mui/material/List";
 
 function Copyright(props: any) {
     return (
@@ -22,6 +27,45 @@ function Copyright(props: any) {
             {new Date().getFullYear()}
             {'.'}
         </Typography>
+    );
+}
+
+function NestedList() {
+    const [open, setOpen] = React.useState(true);
+
+    const handleClick = () => {
+        setOpen(!open);
+    };
+
+    return (
+        <List
+            sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+            subheader={
+                <ListSubheader component="div" id="nested-list-subheader">
+                    Nested List Items
+                </ListSubheader>
+            }
+        >
+            <ListItemButton>
+                <ListItemText primary="Sent mail" />
+            </ListItemButton>
+            <ListItemButton>
+                <ListItemText primary="Drafts" />
+            </ListItemButton>
+            <ListItemButton onClick={handleClick}>
+                <ListItemText primary="Inbox" />
+                {open ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemText primary="Starred" />
+                    </ListItemButton>
+                </List>
+            </Collapse>
+        </List>
     );
 }
 
@@ -92,13 +136,7 @@ export default function ConfigPage() {
                                 height: 240,
                             }}
                         >
-                            <ListItem>
-                                <ListItemText primary="Inbox" />
-                            </ListItem>
-                            <Divider />
-                            <ListItem>
-                                <ListItemText primary="BGM" />
-                            </ListItem>
+                            <NestedList />
                         </Paper>
                     </Grid>
                     {/* Recent Deposits */}
@@ -111,12 +149,19 @@ export default function ConfigPage() {
                                 height: 240,
                             }}
                         >
-                            <MiddleDividers />
+                            <ListItem>
+                                <ListItemText primary="Inbox" />
+                            </ListItem>
+                            <Divider />
+                            <ListItem>
+                                <ListItemText primary="BGM" />
+                            </ListItem>
                         </Paper>
                     </Grid>
                     {/* Recent Orders */}
                     <Grid item xs={12}>
                         <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                            <MiddleDividers />
                         </Paper>
                     </Grid>
                 </Grid>
