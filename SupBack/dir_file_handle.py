@@ -1,8 +1,9 @@
-# -*- coding: utf-8 -*-
-
 import os
 
 from pprint import pprint
+
+# noinspection PyUnresolvedReferences
+from win32com.shell import shell, shellcon
 
 
 class DirHandler(object):
@@ -94,15 +95,34 @@ class DirHandler(object):
 		return resp_dict
 
 
+class ShellDirHandler(object):
+	def __init__(self):
+		pass
+
+	def get_all_files_full_path(self, in_dir):
+		desktop_shell_folder = shell.SHGetDesktopFolder()
+		enum_obj = desktop_shell_folder.EnumObjects(None, shellcon.SHCONTF_FOLDERS | shellcon.SHCONTF_NONFOLDERS)
+		while True:
+			pids = enum_obj.Next()
+			if pids is None or pids == []:
+				break
+			for pid in pids:
+				# print(pid)
+				print(desktop_shell_folder.GetDisplayNameOf(pid, shellcon.SHGDN_INFOLDER | shellcon.SHGDN_FOREDITING))
+				# print(pid[0].decode("ascii"))
+
+
 if __name__ == "__main__":
-	dir_handler = DirHandler()
-	file_size_dict = dir_handler.list_file_in_size_order(r"D:\_record", False)
-
-	result = ""
-	for file_size_object in file_size_dict["answer"]:
-		file = file_size_object["file_full_path"]
-		size = file_size_object["file_size"]
-		result += f"{file}\t{size}\n"
-
-	print(result)
+	# dir_handler = DirHandler()
+	# file_size_dict = dir_handler.list_file_in_size_order(r"D:\_record", False)
+	#
+	# result = ""
+	# for file_size_object in file_size_dict["answer"]:
+	# 	file = file_size_object["file_full_path"]
+	# 	size = file_size_object["file_size"]
+	# 	result += f"{file}\t{size}\n"
+	#
+	# print(result)
+	shell_dir_handler = ShellDirHandler()
+	shell_dir_handler.get_all_files_full_path("")
 
