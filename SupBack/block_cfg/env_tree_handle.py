@@ -138,8 +138,8 @@ class EnvTreeHandler(object):
 		sub_cfg_dict = sub_state_dict_template
 		sub_cfg_dict["name"] = in_name
 		sub_cfg_dict["conditions"][0]["methodName"] = "CheckInAABB"
-		sub_cfg_dict["conditions"][0]["parameters"] = "571,53,-802,631,85,-755"
-		sub_cfg_dict["results"][0]["resultValue"]["stringValue"] = "BGM_Scene_AbandonedBuilding"
+		sub_cfg_dict["conditions"][0]["parameters"] = "1433,75,-2309,1508,119,-2254"
+		sub_cfg_dict["results"][0]["resultValue"]["stringValue"] = "BGM_Scene_OnnSennHotel"
 
 		self.bgm_cfg_dict["root"]["subStates"].append(sub_cfg_dict)
 		# self.env_cfg_dict[]
@@ -184,5 +184,5 @@ class EnvTreeHandler(object):
 if __name__ == "__main__":
 	block_cfg_handler = EnvTreeHandler()
 	block_cfg_handler.load_env_tree(r"E:\Workflow\Block-wangjunyi.42-trunk", "JungoTownRP")
-	block_cfg_handler.add_bgm_sub_states("AbandonedBuilding")
+	block_cfg_handler.add_bgm_sub_states("OnnSennHotel")
 	block_cfg_handler.save_env_tree()

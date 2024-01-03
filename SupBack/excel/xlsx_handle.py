@@ -44,7 +44,12 @@ class XlsxHandler(object):
 		self.attr_names = []
 		self.attr_columns = []
 
+		self.attrs = []
+
 		self.col_handler = ColumnNumHandler()
+
+		self.max_row = 0
+		self.max_col = 0
 
 	@staticmethod
 	def is_valid_xlsx(in_file_path):
@@ -62,6 +67,18 @@ class XlsxHandler(object):
 				self.ws = sheet
 				break
 			ws_i += 1
+
+		self.max_row = self.ws.max_row
+		self.max_col = self.ws.max_column
+
+	def get_cell_of_col_num(self, col_num: int, row_num: int):
+		col = self.col_handler.col_of_num(col_num)
+		cell_index = col + str(row_num)
+		return self.ws[cell_index].value
+
+	def get_cell_of_col(self, col: str, row_num: int):
+		cell_index = col + str(row_num)
+		return self.ws[cell_index].value
 			
 	def get_row_of_columns(self, col_range: [str], row):
 		if self.ws is None:
@@ -79,6 +96,8 @@ class XlsxHandler(object):
 
 		for column_num in column_nums:
 			col = self.col_handler.col_of_num(column_num)
+			if col not in self.attr_columns:
+				self.attr_columns.append(col)
 			cell_index = col + row
 			cell_value = self.ws[cell_index].value
 			row_values.append(cell_value)
@@ -89,13 +108,21 @@ class XlsxHandler(object):
 		if self.ws is None:
 			return
 
-		for attr_column in attr_name_columns:
-			if attr_column not in self.attr_columns:
-				self.attr_columns.append(attr_column)
-
 		for attr_name in self.get_row_of_columns(attr_name_columns, attr_name_row):
 			if attr_name not in self.attr_names:
 				self.attr_names.append(attr_name)
+
+	def init_attr(self):
+		for i_row in range(self.ws.max_row):
+			for attr_name in self.attr_names:
+				attr = {}
+				for attr_column in self.attr_columns:
+					col_num = self.col_handler.num_of_col(attr_column)
+					col = self.col_handler.col_of_num(col_num)
+					cell_index = col + str(i_row + 1)
+					cell_value = self.ws[cell_index].value
+					attr[attr_name] = cell_value
+				self.attrs.append(attr)
 
 
 if __name__ == "__main__":
@@ -108,3 +135,4 @@ if __name__ == "__main__":
 	print(column_handler.col_of_num(1))
 	print(column_handler.col_of_num(26))
 	print(column_handler.col_of_num(53))
+	print(xlsx_handler.max_row)
