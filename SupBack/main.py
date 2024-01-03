@@ -9,6 +9,7 @@ from flask_cors import CORS
 
 from dir_file_handle import DirHandler
 from freq_note_handle import FreqNoteTrans
+from bpm_calc_handle import BPMHandler
 
 app = Flask(__name__)
 CORS(app)
@@ -129,6 +130,42 @@ def trans_note_freq():
 		note = freq_note_trans.get_near_note(float(freq_parm))
 
 		resp = Response(json.dumps({"note": note, "freq": freq_parm}))
+		resp.headers['Access-Control-Allow-Origin'] = '*'
+		return resp
+
+	resp = Response(json.dumps({"answer": "none", "status": "-1"}))
+	resp.headers['Access-Control-Allow-Origin'] = '*'
+	return resp
+
+
+@app.route('/bpm', methods=["GET"])
+def bpm_handle():
+	bpm_handler = BPMHandler()
+
+	bpm_param_encoded = request.args.get("bpm")
+	bpm_param = unquote(bpm_param_encoded)
+	print(f"bpm_handle 得到 bpm_param: {bpm_param}")
+
+	spb_parm_encoded = request.args.get("spb")
+	spb_parm = unquote(spb_parm_encoded)
+	print(f"bpm_handle 得到 spb_parm: {spb_parm}")
+
+	if bpm_param in ["", None] and spb_parm in ["", None]:
+		resp = Response(json.dumps({"answer": "missing_path", "status": "-1"}))
+		resp.headers['Access-Control-Allow-Origin'] = '*'
+		return resp
+
+	if spb_parm in ["", None]:
+		freq = bpm_handler.spb_of_bpm(float(bpm_param))
+
+		resp = Response(json.dumps({"bpm": bpm_param, "spb": str(freq)}))
+		resp.headers['Access-Control-Allow-Origin'] = '*'
+		return resp
+
+	if bpm_param in ["", None]:
+		note = bpm_handler.bpm_of_spb(float(spb_parm))
+
+		resp = Response(json.dumps({"bpm": note, "spb": spb_parm}))
 		resp.headers['Access-Control-Allow-Origin'] = '*'
 		return resp
 

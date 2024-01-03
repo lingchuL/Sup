@@ -18,7 +18,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AlertDialog from "@/app/main/AlertDialog";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import {Get_Json, TransNoteFreq} from "@/app/api/route";
+import {Get_Json, TransBPMSPB, TransNoteFreq} from "@/app/api/route";
 import {Dialog, TextField} from "@mui/material";
 import FileSizeList from "@/app/main/file_size_list";
 import {useState} from "react";
@@ -26,6 +26,10 @@ import {useState} from "react";
 interface NoteFreq {
     note: string;
     freq: string
+}
+interface BPMSPB {
+    bpm: string;
+    spb: string
 }
 
 function Copyright(props: any) {
@@ -45,6 +49,9 @@ export default function Dashboard() {
     const [note, setNote] = useState("A4")
     const [freq, setFreq] = useState("")
 
+    const [bpm, setBPM] = useState("60")
+    const [spb, setSPB] = useState("")
+
     return (
         <Box
             component="main"
@@ -61,7 +68,7 @@ export default function Dashboard() {
             <Toolbar />
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 <Grid container spacing={3}>
-                    {/* Chart */}
+                    {/* Note - Freq */}
                     <Grid item xs={12} md={8} lg={9}>
                         <Paper
                             sx={{
@@ -72,11 +79,16 @@ export default function Dashboard() {
                             }}
                         >
                             <React.Fragment>
-                                <TextField variant="outlined" value={note} onChange={(v) => setNote(v.target.value)
+                                <TextField variant="outlined" value={note} onChange={(v) => {
+                                    setNote(v.target.value)
+                                    setFreq("")
+                                }
                                 }>
                                 </TextField>
-                                <TextField variant="outlined" value={freq} onChange={(v) => setFreq(v.target.value)
-                                }>
+                                <TextField variant="outlined" value={freq} onChange={(v) => {
+                                    setNote("")
+                                    setFreq(v.target.value)
+                                }}>
                                 </TextField>
                                 <Button
                                     variant="outlined"
@@ -91,6 +103,44 @@ export default function Dashboard() {
                                         })
                                     }}>
                                     Freq
+                                </Button>
+                            </React.Fragment>
+                        </Paper>
+                    </Grid>
+                    {/* BPM - SPB */}
+                    <Grid item xs={12} md={8} lg={9}>
+                        <Paper
+                            sx={{
+                                p: 2,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                height: 240,
+                            }}
+                        >
+                            <React.Fragment>
+                                <TextField variant="outlined" value={bpm} onChange={(v) => {
+                                    setBPM(v.target.value)
+                                    setSPB("")
+                                }}>
+                                </TextField>
+                                <TextField variant="outlined" value={spb} onChange={(v) => {
+                                    setBPM("")
+                                    setSPB(v.target.value)
+                                }}>
+                                </TextField>
+                                <Button
+                                    variant="outlined"
+                                    onClick={()=> {
+                                        TransBPMSPB(bpm, spb).then(value => {
+                                            const text = value
+                                            console.log(text)
+                                            const bpm_trans: BPMSPB = JSON.parse(text);
+                                            console.log(bpm_trans)
+                                            setBPM(bpm_trans.bpm)
+                                            setSPB(bpm_trans.spb)
+                                        })
+                                    }}>
+                                    BPM
                                 </Button>
                             </React.Fragment>
                         </Paper>

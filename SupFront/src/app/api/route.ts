@@ -68,3 +68,21 @@ export async function TransNoteFreq(note: string, freq: string): Promise<string>
 
     return data_text
 }
+
+export async function TransBPMSPB(bpm: string, spb: string): Promise<string> {
+    let bpm_param = encodeURIComponent(bpm)
+    let bpm_spb_url = encodeURI('http://127.0.0.1:8133/bpm?bpm=' + bpm_param + "&spb=" + spb)
+    console.log(bpm_spb_url)
+    const res = await fetch(bpm_spb_url, {
+        headers: {
+            "Content-Type": "text/json"
+        },
+        method: "GET",
+        cache: "no-cache",
+    })
+    // console.log(res)
+    const data_text = await res.text()
+    console.log(data_text)
+
+    return data_text
+}
