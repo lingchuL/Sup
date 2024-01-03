@@ -56,7 +56,7 @@ sub_state_dict_template = {
 }
 
 
-class BlockConfigHandler(object):
+class EnvTreeHandler(object):
 	def __init__(self):
 		self.env_cfg_dict = {}
 		self.bgm_cfg_dict = {}
@@ -182,7 +182,7 @@ class BlockConfigHandler(object):
 
 
 if __name__ == "__main__":
-	block_cfg_handler = BlockConfigHandler()
+	block_cfg_handler = EnvTreeHandler()
 	block_cfg_handler.load_env_tree(r"E:\Workflow\Block-wangjunyi.42-trunk", "JungoTownRP")
 	block_cfg_handler.add_bgm_sub_states("AbandonedBuilding")
 	block_cfg_handler.save_env_tree()

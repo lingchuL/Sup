@@ -7,9 +7,9 @@ from urllib.parse import unquote
 from flask import Flask, request, Response
 from flask_cors import CORS
 
-from dir_file_handle import DirHandler
-from freq_note_handle import FreqNoteTrans
-from bpm_calc_handle import BPMHandler
+from dir_file.dir_file_handle import DirHandler
+from audio.freq_note_handle import FreqNoteTrans
+from audio.bpm_handle import BPMHandler
 
 app = Flask(__name__)
 CORS(app)
