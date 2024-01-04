@@ -10,6 +10,7 @@ class InteractAudioCfgHandler(object):
 		self.xlsx_handler = XlsxHandler()
 
 		self.rows = {}
+		self.row_nums = {}
 
 	def load(self, in_cfg_path):
 		self.xlsx_handler.load(in_cfg_path)
@@ -19,14 +20,13 @@ class InteractAudioCfgHandler(object):
 
 	def init_attr(self, main_key_name: str):
 		for i_row in range(self.xlsx_handler.ws.max_row):
-			i_attr_column = 0
 			row = {}
 			for attr_column in self.xlsx_handler.attr_columns:
 				cell_value = self.xlsx_handler.get_cell_of_col(attr_column, i_row + 1)
-				attr_name = self.xlsx_handler.attr_names[i_attr_column]
+				attr_name = self.xlsx_handler.get_attr_name_by_col(attr_column)
 				row[attr_name] = cell_value
-				i_attr_column += 1
 			self.rows[row[main_key_name]] = row
+			self.row_nums[row[main_key_name]] = i_row + 1
 
 	def search_attr_by_id(self, in_id) -> dict:
 		if in_id not in self.rows:
@@ -67,32 +67,58 @@ class InteractAudioCfgHandler(object):
 	def set_sound_param(self, id_, attr_name, sound_list: [str], param_name="sfx_start"):
 		attr_dict = self.search_attr_by_id(id_)
 
-		old_sound_param = ""
+		search_result = re.search(rf",{param_name}=str\?'.*?',", attr_dict[attr_name] + ",")
+		old_sound_param = search_result.group(0)[:-1] if search_result else ""
 		attr_value = attr_dict[attr_name]
 
 		sound_param = ""
 		for sound in sound_list:
-			sound_param += sound + '/'
+			sound_param += sound + '\'/\''
 		if sound_param != "":
-			sound_param = sound_param[:-1]
+			sound_param = sound_param[:-3]
 			sound_param = f",{param_name}=str?'{sound_param}'"
 			if old_sound_param != "":
 				attr_dict[attr_name] = attr_value.replace(old_sound_param, sound_param)
 			else:
 				attr_dict[attr_name] += sound_param
 
-	def set_rp_interact_sound(self, id_: str, sfx_start_sounds: [str], sfx_end_sounds: [str]):
-		if sfx_start_sounds is None and sfx_end_sounds is None:
-			return
-		if sfx_start_sounds == [] and sfx_end_sounds == []:
+	def remove_sound_param(self, id_, attr_name, param_name):
+		attr_dict = self.search_attr_by_id(id_)
+
+		search_result = re.search(rf",{param_name}=str\?'.*?',", attr_dict[attr_name] + ",")
+		old_sound_param = search_result.group(0)[:-1] if search_result else ""
+		attr_value = attr_dict[attr_name]
+
+		if old_sound_param != "":
+			attr_dict[attr_name] = attr_value.replace(old_sound_param, "")
+
+	def set_rp_interact_sound(self, id_: str, sfx_sounds: [str], in_param_name):
+		if sfx_sounds is None or sfx_sounds == []:
 			return
 
 		rp_interact_attr_name = self.get_sound_param_attr_name(id_)
 
-		self.set_sound_param(id_, rp_interact_attr_name, sfx_start_sounds, "sfx_start")
-		self.set_sound_param(id_, rp_interact_attr_name, sfx_end_sounds, "sfx_end")
+		self.set_sound_param(id_, rp_interact_attr_name, sfx_sounds, in_param_name)
 
 		print(self.search_attr_by_id(id_))
+
+	def remove_rp_interact_sound(self, id_: str, in_param_name: str):
+		if in_param_name == "":
+			return
+
+		rp_interact_attr_name = self.get_sound_param_attr_name(id_)
+		self.remove_sound_param(id_, rp_interact_attr_name, in_param_name)
+		print(self.search_attr_by_id(id_))
+
+	def write_save_id(self, id_):
+		row_num = self.row_nums[id_]
+		attr_dict = self.search_attr_by_id(id_)
+		self.xlsx_handler.write_save_row(row_num, attr_dict)
+
+	def write_save_cell(self, id_, attr_name):
+		row_num = self.row_nums[id_]
+		col = self.xlsx_handler.get_attr_col_by_name(attr_name)
+		self.xlsx_handler.write_save_cell(col, row_num, self.search_attr_by_id(id_)[attr_name])
 
 
 if __name__ == "__main__":
@@ -104,4 +130,7 @@ if __name__ == "__main__":
 	# interact_audio_cfg_handler.search_attr("GrayRoof")
 	# interact_audio_cfg_handler.search_attr("Piano")
 	# interact_audio_cfg_handler.search_attr_rows("_RPInteract")
-	interact_audio_cfg_handler.set_rp_interact_sound("Piano", [], ["CH_GasStove_Skill_Off", "CH_GasStove_Skill_On"])
+	interact_audio_cfg_handler.set_rp_interact_sound("Piano", ["CH_GasStove_Skill_Off", "CH_GasStove_Skill_On"], "sfx_end")
+	interact_audio_cfg_handler.set_rp_interact_sound("Piano", ["CH_GasStove_Skill_On"], "sfx_start")
+	interact_audio_cfg_handler.remove_rp_interact_sound("Piano", "sfx_start")
+	interact_audio_cfg_handler.write_save_id("Piano")

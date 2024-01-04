@@ -38,6 +38,7 @@ class ColumnNumHandler(object):
 
 class XlsxHandler(object):
 	def __init__(self):
+		self.file_path = ""
 		self.wb = None
 		self.ws = None
 
@@ -59,6 +60,7 @@ class XlsxHandler(object):
 		if not self.is_valid_xlsx(in_file_path):
 			return
 
+		self.file_path = in_file_path
 		self.wb = load_workbook(in_file_path, data_only=is_data_only)
 
 		ws_i = 0
@@ -71,6 +73,14 @@ class XlsxHandler(object):
 		self.max_row = self.ws.max_row
 		self.max_col = self.ws.max_column
 
+	def try_save(self):
+		try:
+			self.wb.save(self.file_path)
+		except:
+			pass
+		finally:
+			pass
+
 	def get_cell_of_col_num(self, col_num: int, row_num: int):
 		col = self.col_handler.col_of_num(col_num)
 		cell_index = col + str(row_num)
@@ -79,6 +89,10 @@ class XlsxHandler(object):
 	def get_cell_of_col(self, col: str, row_num: int):
 		cell_index = col + str(row_num)
 		return self.ws[cell_index].value
+
+	def set_cell_of_col(self, col: str, row_num: int, value):
+		cell_index = col + str(row_num)
+		self.ws[cell_index] = value
 			
 	def get_row_of_columns(self, col_range: [str], row):
 		if self.ws is None:
@@ -112,17 +126,32 @@ class XlsxHandler(object):
 			if attr_name not in self.attr_names:
 				self.attr_names.append(attr_name)
 
-	def init_attr(self):
-		for i_row in range(self.ws.max_row):
-			for attr_name in self.attr_names:
-				attr = {}
-				for attr_column in self.attr_columns:
-					col_num = self.col_handler.num_of_col(attr_column)
-					col = self.col_handler.col_of_num(col_num)
-					cell_index = col + str(i_row + 1)
-					cell_value = self.ws[cell_index].value
-					attr[attr_name] = cell_value
-				self.attrs.append(attr)
+	def get_attr_col_by_name(self, attr_name):
+		assert len(self.attr_names) == len(self.attr_columns)
+		return self.attr_columns[self.attr_names.index(attr_name)]
+
+	def get_attr_name_by_col(self, attr_col):
+		assert len(self.attr_names) == len(self.attr_columns)
+		return self.attr_names[self.attr_columns.index(attr_col)]
+
+	def write_save_cell(self, col, row_num, value):
+		self.set_cell_of_col(col, row_num, value)
+		self.try_save()
+		SupLogger.info("cell saved")
+
+	def write_save_row(self, row_num, attr_dict):
+		"""
+		写入某行的属性字典并保存
+		:param row_num: 行序号
+		:param attr_dict: 属性字典，key为可以找到对应列序号的属性名， value为属性值
+		:return:
+		"""
+		for attr_name, attr_value in attr_dict.items():
+			col = self.get_attr_col_by_name(attr_name)
+			self.set_cell_of_col(col, row_num, attr_value)
+
+		self.try_save()
+		SupLogger.info("excel saved")
 
 
 if __name__ == "__main__":
