@@ -2,152 +2,69 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Link from '@mui/material/Link';
+import {ConfigPage} from "@/app/main/config/env_tree"
+import {Tab, Tabs} from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
-import {Chip, Collapse, ListItem, Stack} from "@mui/material";
-import ListItemText from "@mui/material/ListItemText";
-import Button from "@mui/material/Button";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListSubheader from "@mui/material/ListSubheader";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import {ExpandLess, ExpandMore} from "@mui/icons-material";
-import List from "@mui/material/List";
 
-function Copyright(props: any) {
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
+
+function CustomTabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+
     return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
     );
 }
 
-function NestedList() {
-    const [open, setOpen] = React.useState(true);
+function a11yProps(index: number) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
 
-    const handleClick = () => {
-        setOpen(!open);
+export default function BasicTabs() {
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
     };
 
     return (
-        <List
-            sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-            subheader={
-                <ListSubheader component="div" id="nested-list-subheader">
-                    Nested List Items
-                </ListSubheader>
-            }
-        >
-            <ListItemButton>
-                <ListItemText primary="Sent mail" />
-            </ListItemButton>
-            <ListItemButton>
-                <ListItemText primary="Drafts" />
-            </ListItemButton>
-            <ListItemButton onClick={handleClick}>
-                <ListItemText primary="Inbox" />
-                {open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                    <ListItemButton sx={{ pl: 4 }}>
-                        <ListItemText primary="Starred" />
-                    </ListItemButton>
-                </List>
-            </Collapse>
-        </List>
-    );
-}
-
-function MiddleDividers() {
-    return (
-        <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-            <Box sx={{ my: 3, mx: 2 }}>
-                <Grid container alignItems="center">
-                    <Grid item xs>
-                        <Typography gutterBottom variant="h4" component="div">
-                            Toothbrush
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Typography gutterBottom variant="h6" component="div">
-                            $4.50
-                        </Typography>
-                    </Grid>
-                </Grid>
-                <Typography color="text.secondary" variant="body2">
-                    Pinstriped cornflower blue cotton blouse takes you on a walk to the park or
-                    just down the hall.
-                </Typography>
-            </Box>
-            <Divider variant="middle" />
-            <Box sx={{ m: 2 }}>
-                <Typography gutterBottom variant="body1">
-                    Select type
-                </Typography>
-                <Stack direction="row" spacing={1}>
-                    <Chip label="Extra Soft" />
-                    <Chip color="primary" label="Soft" />
-                    <Chip label="Medium" />
-                    <Chip label="Hard" />
-                </Stack>
-            </Box>
-            <Box sx={{ mt: 3, ml: 1, mb: 1 }}>
-                <Button>Add to cart</Button>
-            </Box>
-        </Box>
-    );
-}
-
-export default function ConfigPage() {
-    return (
-        <Box
-            component="main"
-            sx={{
-                backgroundColor: (theme) =>
-                    theme.palette.mode === 'light'
-                        ? theme.palette.grey[100]
-                        : theme.palette.grey[900],
-                flexGrow: 1,
-                height: '100vh',
-                overflow: 'auto',
-            }}
-        >
+        <Box sx={{ width: '100%' }}>
             <Toolbar />
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Grid container spacing={3}>
-                    {/* Chart */}
-                    <Grid item xs={12}>
-                        <Paper
-                            sx={{
-                                p: 2,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                // height: 240,
-                            }}
-                        >
-                            <NestedList />
-                        </Paper>
-                    </Grid>
-                    {/* Recent Orders */}
-                    <Grid item xs={12}>
-                        <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                            <MiddleDividers />
-                        </Paper>
-                    </Grid>
-                </Grid>
-                <Copyright sx={{ pt: 4 }} />
-            </Container>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                    <Tab label="Item One" {...a11yProps(0)} />
+                    <Tab label="Item Two" {...a11yProps(1)} />
+                    <Tab label="Item Three" {...a11yProps(2)} />
+                </Tabs>
+            </Box>
+            <CustomTabPanel value={value} index={0}>
+                <ConfigPage />
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={1}>
+                Item Two
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={2}>
+                Item Three
+            </CustomTabPanel>
         </Box>
     );
 }
