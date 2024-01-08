@@ -4,6 +4,9 @@ import math
 
 from openpyxl import Workbook, load_workbook
 
+from win32com.client import Dispatch
+import pythoncom
+
 from log_handle import SupLogger
 
 
@@ -86,11 +89,18 @@ class XlsxHandler(object):
 
 	def try_save(self):
 		try:
+			self.wb.close()
 			self.wb_save.save(self.file_path)
 		except:
 			pass
 		finally:
-			pass
+			pythoncom.CoInitialize()
+			xlsx_app = Dispatch("Excel.Application")
+			xlsx_app.Visible = False
+			xlsx_wb = xlsx_app.Workbooks.Open(self.file_path)
+			xlsx_wb.Save()
+			xlsx_wb.Close()
+			xlsx_app.Quit()
 
 	def close(self):
 		self.wb.close()
