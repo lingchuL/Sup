@@ -41,6 +41,10 @@ class XlsxHandler(object):
 		self.file_path = ""
 		self.wb = None
 		self.ws = None
+		self.ws_index = 0
+
+		self.wb_save = None
+		self.ws_save = None
 
 		self.attr_names = []
 		self.attr_columns = []
@@ -56,17 +60,24 @@ class XlsxHandler(object):
 	def is_valid_xlsx(in_file_path):
 		return os.path.isfile(in_file_path) and os.path.exists(in_file_path) and in_file_path.endswith('.xlsx')
 
-	def load(self, in_file_path, sheet_index=0, is_data_only=True):
+	def load(self, in_file_path, sheet_index=0):
 		if not self.is_valid_xlsx(in_file_path):
 			return
 
 		self.file_path = in_file_path
-		self.wb = load_workbook(in_file_path, data_only=is_data_only)
+		self.ws_index = sheet_index
+		self.wb = load_workbook(in_file_path, data_only=True)
+		self.wb_save = load_workbook(in_file_path, data_only=False)
 
 		ws_i = 0
 		for sheet in self.wb:
 			if ws_i == sheet_index:
 				self.ws = sheet
+				break
+			ws_i += 1
+		for sheet in self.wb_save:
+			if ws_i == sheet_index:
+				self.ws_save = sheet
 				break
 			ws_i += 1
 
@@ -75,11 +86,15 @@ class XlsxHandler(object):
 
 	def try_save(self):
 		try:
-			self.wb.save(self.file_path)
+			self.wb_save.save(self.file_path)
 		except:
 			pass
 		finally:
 			pass
+
+	def close(self):
+		self.wb.close()
+		self.wb_save.close()
 
 	def get_cell_of_col_num(self, col_num: int, row_num: int):
 		col = self.col_handler.col_of_num(col_num)
@@ -92,7 +107,8 @@ class XlsxHandler(object):
 
 	def set_cell_of_col(self, col: str, row_num: int, value):
 		cell_index = col + str(row_num)
-		self.ws[cell_index] = value
+
+		self.ws_save[cell_index] = value
 			
 	def get_row_of_columns(self, col_range: [str], row):
 		if self.ws is None:

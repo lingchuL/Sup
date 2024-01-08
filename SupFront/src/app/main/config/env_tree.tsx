@@ -108,7 +108,7 @@ function MiddleDividers() {
     );
 }
 
-export function ConfigPage() {
+export function EnvTreeCfgPage() {
     return (
         <Box
             component="main"

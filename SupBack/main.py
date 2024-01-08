@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import json
 
 from urllib.parse import unquote
@@ -10,6 +8,8 @@ from flask_cors import CORS
 from dir_file.dir_file_handle import DirHandler
 from audio.freq_note_handle import FreqNoteTrans
 from audio.bpm_handle import BPMHandler
+
+from block_cfg.interact_audio_receiver import InteractAudioReceiver
 
 app = Flask(__name__)
 CORS(app)
@@ -172,3 +172,10 @@ def bpm_handle():
 	resp = Response(json.dumps({"answer": "none", "status": "-1"}))
 	resp.headers['Access-Control-Allow-Origin'] = '*'
 	return resp
+
+
+@app.route('/cfg', methods=["GET"])
+def interact_audio_handle():
+	print(request.args)
+	receiver = InteractAudioReceiver(request.args)
+	return receiver.handle_action()

@@ -18,7 +18,7 @@ class InteractAudioCfgHandler(object):
 		self.xlsx_handler.add_attr_name(["B", "B"], "4")
 		self.xlsx_handler.add_attr_name(["AL", "AU"], "3")
 
-	def init_attr(self, main_key_name: str):
+	def init_main_key(self, main_key_name: str):
 		for i_row in range(self.xlsx_handler.ws.max_row):
 			row = {}
 			for attr_column in self.xlsx_handler.attr_columns:
@@ -28,26 +28,46 @@ class InteractAudioCfgHandler(object):
 			self.rows[row[main_key_name]] = row
 			self.row_nums[row[main_key_name]] = i_row + 1
 
+	def close(self):
+		self.xlsx_handler.close()
+
 	def search_attr_by_id(self, in_id) -> dict:
 		if in_id not in self.rows:
 			return {}
 		# print(self.rows[in_id])
 		return self.rows[in_id]
 
-	def search_attr_rows(self, in_search):
+	def search(self, in_search):
 		result_rows = []
 		for row in self.rows.values():
 			for value in row.values():
 				if value is None:
 					continue
-				str_value = str(value)
-				# print(str_value)
-				if in_search in str_value:
+				if in_search in str(value):
 					result_rows.append(row)
+					break
+		return result_rows
+
+	def search_with_audio_cfg(self, in_id):
+		rows = self.search(in_id)
+		result_rows = []
+
+		for row in rows:
+			row_id = row["id"]
+			row_dict = {
+				"id_": row["id"],
+				"desc": row["名字"],
+				"guid": row["guid"],
+				"sfx_start": self.get_sound_param(row_id, "sfx_start"),
+				"sfx_end": self.get_sound_param(row_id, "sfx_end"),
+			}
+			result_rows.append(row_dict)
+
 		return result_rows
 
 	def get_sound_param_attr_name(self, id_):
 		attr_dict = self.search_attr_by_id(id_)
+		print(attr_dict)
 
 		rp_interact_attr_name = ""
 		first_empty_attr_name = ""
@@ -64,23 +84,38 @@ class InteractAudioCfgHandler(object):
 
 		return rp_interact_attr_name
 
-	def set_sound_param(self, id_, attr_name, sound_list: [str], param_name="sfx_start"):
+	def get_sound_param(self, id_, param_name):
 		attr_dict = self.search_attr_by_id(id_)
 
-		search_result = re.search(rf",{param_name}=str\?'.*?',", attr_dict[attr_name] + ",")
-		old_sound_param = search_result.group(0)[:-1] if search_result else ""
-		attr_value = attr_dict[attr_name]
+		for attr_name, attr_value in attr_dict.items():
+			if "_RPInteract" in str(attr_value):
+				search_result = re.search(rf",{param_name}=str\?'.*?',", attr_value + ",")
+				old_sound_param = search_result.group(0)[len(rf",{param_name}=str\?'") - 1:-2] if search_result else ""
 
-		sound_param = ""
-		for sound in sound_list:
-			sound_param += sound + '\'/\''
-		if sound_param != "":
-			sound_param = sound_param[:-3]
-			sound_param = f",{param_name}=str?'{sound_param}'"
-			if old_sound_param != "":
-				attr_dict[attr_name] = attr_value.replace(old_sound_param, sound_param)
-			else:
-				attr_dict[attr_name] += sound_param
+				return old_sound_param
+
+		return ""
+
+	def set_sound_param(self, id_, attr_name, sound_param_str: str, param_name="sfx_start"):
+		attr_dict = self.search_attr_by_id(id_)
+
+		attr_value = attr_dict[attr_name]
+		if attr_value is None:
+			attr_value = ""
+
+		search_result = re.search(rf",{param_name}=str\?'.*?',", attr_value + ",")
+		old_sound_param = search_result.group(0)[:-1] if search_result else ""
+
+		sound_param = f",{param_name}=str?'{sound_param_str}'"
+
+		if attr_value == "":
+			attr_value = "_RPInteract:"
+			sound_param = sound_param[1:]
+
+		if old_sound_param != "":
+			attr_dict[attr_name] = attr_value.replace(old_sound_param, sound_param)
+		else:
+			attr_dict[attr_name] = attr_value + sound_param
 
 	def remove_sound_param(self, id_, attr_name, param_name):
 		attr_dict = self.search_attr_by_id(id_)
@@ -92,13 +127,15 @@ class InteractAudioCfgHandler(object):
 		if old_sound_param != "":
 			attr_dict[attr_name] = attr_value.replace(old_sound_param, "")
 
-	def set_rp_interact_sound(self, id_: str, sfx_sounds: [str], in_param_name):
-		if sfx_sounds is None or sfx_sounds == []:
+	def set_rp_interact_sound(self, id_: str, sound_param_str: str, in_param_name):
+		if sound_param_str == "":
 			return
 
+		print(id_)
 		rp_interact_attr_name = self.get_sound_param_attr_name(id_)
+		print(rp_interact_attr_name)
 
-		self.set_sound_param(id_, rp_interact_attr_name, sfx_sounds, in_param_name)
+		self.set_sound_param(id_, rp_interact_attr_name, sound_param_str, in_param_name)
 
 		print(self.search_attr_by_id(id_))
 
@@ -124,13 +161,12 @@ class InteractAudioCfgHandler(object):
 if __name__ == "__main__":
 	interact_audio_cfg_handler = InteractAudioCfgHandler()
 	interact_audio_cfg_handler.load(r"E:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\1_体素配置_RP.xlsx")
-	interact_audio_cfg_handler.init_attr("id")
+	interact_audio_cfg_handler.init_main_key("id")
 	print(interact_audio_cfg_handler.xlsx_handler.attr_names)
 	# pprint(interact_audio_cfg_handler.rows)
-	# interact_audio_cfg_handler.search_attr("GrayRoof")
-	# interact_audio_cfg_handler.search_attr("Piano")
-	# interact_audio_cfg_handler.search_attr_rows("_RPInteract")
-	interact_audio_cfg_handler.set_rp_interact_sound("Piano", ["CH_GasStove_Skill_Off", "CH_GasStove_Skill_On"], "sfx_end")
-	interact_audio_cfg_handler.set_rp_interact_sound("Piano", ["CH_GasStove_Skill_On"], "sfx_start")
-	interact_audio_cfg_handler.remove_rp_interact_sound("Piano", "sfx_start")
-	interact_audio_cfg_handler.write_save_id("Piano")
+	pprint(interact_audio_cfg_handler.search("Drum_Stand_Instrument"))
+	interact_audio_cfg_handler.set_rp_interact_sound("Piano", "HO_Drum_Skill_Play2", "sfx_start")
+	# interact_audio_cfg_handler.set_rp_interact_sound("Piano", ["HO_Drum_Skill_Play"], "sfx_start")
+	# interact_audio_cfg_handler.set_rp_interact_sound("Piano", ["HO_Drum_Skill_Play", "HO_Guitar_Skill_Play"], "sfx_end")
+	# interact_audio_cfg_handler.remove_rp_interact_sound("Piano", "sfx_start")
+	# interact_audio_cfg_handler.write_save_id("Drum_Stand_Instrument")

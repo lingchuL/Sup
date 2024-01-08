@@ -138,7 +138,7 @@ class EnvTreeHandler(object):
 		sub_cfg_dict = sub_state_dict_template
 		sub_cfg_dict["name"] = in_name
 		sub_cfg_dict["conditions"][0]["methodName"] = "CheckInAABB"
-		sub_cfg_dict["conditions"][0]["parameters"] = "1433,75,-2309,1508,119,-2254"
+		sub_cfg_dict["conditions"][0]["parameters"] = "1428,72,-2309,1507,119,-2244"
 		sub_cfg_dict["results"][0]["resultValue"]["stringValue"] = "BGM_Scene_OnnSennHotel"
 
 		self.bgm_cfg_dict["root"]["subStates"].append(sub_cfg_dict)
