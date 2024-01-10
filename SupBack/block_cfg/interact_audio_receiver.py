@@ -47,7 +47,7 @@ class InteractAudioReceiver(RequestReceiver):
 		handler = InteractAudioCfgHandler()
 		handler.load(cfg_file_path, "id")
 
-		search_result = handler.get_cfg_dict(search_name)
+		search_result = handler.get_row_dict_list(search_name)
 
 		status_code = "0"
 

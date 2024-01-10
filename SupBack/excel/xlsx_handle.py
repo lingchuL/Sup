@@ -38,13 +38,28 @@ class ColumnNumHandler(object):
 		div, mod = divmod(in_num - 1, 26)
 		return self.single_num_chr(div - 1) + self.single_num_chr(mod) if div else self.single_num_chr(mod)
 
+	def form_col_list_by_range(self, col_range: [str]):
+		assert len(col_range) == 2
+
+		col_list = []
+
+		col_min = self.num_of_col(col_range[0])
+		col_max = self.num_of_col(col_range[1])
+
+		column_nums = range(col_min, col_max + 1, 1)
+		for column_num in column_nums:
+			col_list.append(self.col_of_num(column_num))
+
+		return col_list
+
 
 class XlsxHandler(object):
 	def __init__(self):
 		self.file_path = ""
 		self.wb = None
 		self.ws = None
-		self.ws_index = 0
+		self.sheet_index = 0
+		self.sheet_index_win32com = 1
 
 		self.wb_save = None
 		self.ws_save = None
@@ -68,7 +83,8 @@ class XlsxHandler(object):
 			return
 
 		self.file_path = in_file_path
-		self.ws_index = sheet_index
+		self.sheet_index = sheet_index
+		self.sheet_index_win32com = sheet_index + 1
 		self.wb = load_workbook(in_file_path, data_only=True)
 		self.wb_save = load_workbook(in_file_path, data_only=False)
 
@@ -78,6 +94,7 @@ class XlsxHandler(object):
 				self.ws = sheet
 				break
 			ws_i += 1
+		ws_i = 0
 		for sheet in self.wb_save:
 			if ws_i == sheet_index:
 				self.ws_save = sheet
@@ -86,21 +103,6 @@ class XlsxHandler(object):
 
 		self.max_row = self.ws.max_row
 		self.max_col = self.ws.max_column
-
-	def try_save(self):
-		try:
-			self.wb.close()
-			self.wb_save.save(self.file_path)
-		except:
-			pass
-		finally:
-			pythoncom.CoInitialize()
-			xlsx_app = Dispatch("Excel.Application")
-			xlsx_app.Visible = False
-			xlsx_wb = xlsx_app.Workbooks.Open(self.file_path)
-			xlsx_wb.Save()
-			xlsx_wb.Close()
-			xlsx_app.Quit()
 
 	def close(self):
 		self.wb.close()
@@ -120,66 +122,49 @@ class XlsxHandler(object):
 
 		self.ws_save[cell_index] = value
 			
-	def get_row_of_columns(self, col_range: [str], row):
+	def get_attr_names_of_cols(self, col_list: [str], row_num):
 		if self.ws is None:
-			return
+			return []
 
-		if len(col_range) != 2:
-			SupLogger.info("col range must be two")
-
-		row_values = []
-
-		col_min = self.col_handler.num_of_col(col_range[0])
-		col_max = self.col_handler.num_of_col(col_range[1])
-
-		column_nums = range(col_min, col_max + 1, 1)
-
-		for column_num in column_nums:
-			col = self.col_handler.col_of_num(column_num)
+		# 通过列名获取属性名列表
+		attr_names = []
+		for col in col_list:
 			if col not in self.attr_columns:
 				self.attr_columns.append(col)
-			cell_index = col + row
-			cell_value = self.ws[cell_index].value
-			row_values.append(cell_value)
+			cell_index = col + str(row_num)
+			attr_name = self.ws[cell_index].value
+			if attr_name is None or attr_name == "":
+				attr_name = col
+			attr_names.append(attr_name)
+		return attr_names
 
-		return row_values
-
-	def add_attr_name(self, attr_name_col_list: [str], attr_name_row_num: int):
+	def add_attr_name(self, col_list: [str], row_num: int):
 		"""
 		添加对应列行索引的表格的值，作为表头以及属性名
-		:param attr_name_col_list: 属性名表格的列名的列表（Excel本身列名，如["A","AA"]为一对起始）
-		:param attr_name_row_num: 属性名表格的行序号
+		:param col_list: 属性名表格的列名的列表（Excel本身列名，如["A","AA"]为一对起始）
+		:param row_num: 属性名表格的行序号
 		:return:
 		"""
 		if self.ws is None:
 			return
 
-		# 通过列名获取属性名列表
-		attr_names = []
-		for col in attr_name_col_list:
-			if col not in self.attr_columns:
-				self.attr_columns.append(col)
-			cell_index = col + str(attr_name_row_num)
-			cell_value = self.ws[cell_index].value
-			attr_names.append(cell_value)
-
+		attr_names = self.get_attr_names_of_cols(col_list, row_num)
 		for attr_name in attr_names:
 			if attr_name not in self.attr_names:
 				self.attr_names.append(attr_name)
 
-	def add_attr_name_by_range(self, attr_name_columns: [str], attr_name_row_num: int):
+	def add_attr_name_range(self, col_range: [str], row_num: int):
 		"""
 		添加对应列行索引的表格的值，作为表头以及属性名
-		:param attr_name_columns: 属性名表格的列名的起始列表（Excel本身列名，如["A","AA"]为一对起始）
-		:param attr_name_row_num: 属性名表格的行序号
+		:param col_range: 属性名表格的列名的起始列表（Excel本身列名，如["A","AA"]为一对起始）
+		:param row_num: 属性名表格的行序号
 		:return:
 		"""
 		if self.ws is None:
 			return
 
-		for attr_name in self.get_row_of_columns(attr_name_columns, str(attr_name_row_num)):
-			if attr_name not in self.attr_names:
-				self.attr_names.append(attr_name)
+		col_list = self.col_handler.form_col_list_by_range(col_range)
+		self.add_attr_name(col_list, row_num)
 
 	def get_attr_col_by_name(self, attr_name):
 		"""
@@ -200,29 +185,45 @@ class XlsxHandler(object):
 		return self.attr_names[self.attr_columns.index(attr_col)]
 
 	def write_save_cell(self, col, row_num, value):
-		self.set_cell_of_col(col, row_num, value)
-		self.try_save()
+		pythoncom.CoInitialize()
+		xlsx_app = Dispatch("Excel.Application")
+		xlsx_app.Visible = False
+		xlsx_wb = xlsx_app.Workbooks.Open(self.file_path)
+
+		xlsx_wb.Worksheets(self.sheet_index_win32com).Range(col + str(row_num)).value = value
+
+		xlsx_wb.Save()
+		xlsx_wb.Close()
+		xlsx_app.Quit()
 		SupLogger.info("cell saved")
 
-	def write_save_row(self, row_num, attr_dict):
+	def write_save_row_win32com(self, row_num, attr_dict):
 		"""
 		写入某行的属性字典并保存
 		:param row_num: Excel自带的行序号（如1, 2）
 		:param attr_dict: 属性字典，key为可以找到对应列序号的属性名， value为属性值
 		:return:
 		"""
+		pythoncom.CoInitialize()
+		xlsx_app = Dispatch("Excel.Application")
+		xlsx_app.Visible = False
+		xlsx_wb = xlsx_app.Workbooks.Open(self.file_path)
+
 		for attr_name, attr_value in attr_dict.items():
 			col = self.get_attr_col_by_name(attr_name)
-			self.set_cell_of_col(col, row_num, attr_value)
+			xlsx_wb.Worksheets(self.sheet_index_win32com).Range(col + str(row_num)).value = attr_value
 
-		self.try_save()
+		xlsx_wb.Save()
+		xlsx_wb.Close()
+		xlsx_app.Quit()
+
 		SupLogger.info("excel saved")
 
 
 if __name__ == "__main__":
 	xlsx_handler = XlsxHandler()
 	xlsx_handler.load(r"E:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\1_体素配置_RP.xlsx")
-	xlsx_handler.add_attr_name_by_range(["C", "E"], "3")
+	xlsx_handler.add_attr_name_range(["C", "E"], "3")
 	print(xlsx_handler.attr_names)
 	column_handler = ColumnNumHandler()
 	# print(column_handler.num_of_col("AZ"))
