@@ -1,20 +1,19 @@
 import json
 import os.path
 
-from subprocess import Popen, PIPE, STDOUT
-import subprocess
+from subprocess import Popen, PIPE
 
 from urllib.parse import unquote
 
-from flask import Flask, request, Response, Request
-from flask_cors import CORS
+from flask import Response, Request
+
+from base_class.request_receiver import RequestReceiver
 
 from block_cfg.interact_audio_handle import InteractAudioCfgHandler
 
 
-class InteractAudioReceiver(object):
-	def __init__(self, in_request_args: Request.args):
-		self.request_args = in_request_args
+class InteractAudioReceiver(RequestReceiver):
+	def init_arg_name_list(self):
 		self.arg_name_list = [
 			"action",
 			"cfgFilePath",
@@ -23,16 +22,6 @@ class InteractAudioReceiver(object):
 			"sfx_start",
 			"sfx_end",
 		]
-		self.arg_dict = {}
-
-		self.init()
-
-	def init(self):
-		for arg_name in self.arg_name_list:
-			if arg_name in self.request_args:
-				self.arg_dict[arg_name] = self.request_args[arg_name]
-			else:
-				self.arg_dict[arg_name] = ""
 
 	def handle_action(self):
 		result_dict = {}
@@ -56,10 +45,9 @@ class InteractAudioReceiver(object):
 
 		# print(cfg_file_path)
 		handler = InteractAudioCfgHandler()
-		handler.load(cfg_file_path)
-		handler.init_main_key("id")
+		handler.load(cfg_file_path, "id")
 
-		search_result = handler.search_with_audio_cfg(search_name)
+		search_result = handler.get_cfg_dict(search_name)
 
 		status_code = "0"
 
@@ -75,8 +63,7 @@ class InteractAudioReceiver(object):
 		sfx_end = self.arg_dict["sfx_end"]
 
 		handler = InteractAudioCfgHandler()
-		handler.load(cfg_file_path)
-		handler.init_main_key("id")
+		handler.load(cfg_file_path, "id")
 
 		should_save = False if sfx_start is None and sfx_end is None else True
 
@@ -106,6 +93,7 @@ class InteractAudioReceiver(object):
 
 		print(convert_rp_bat_path)
 
+		# 输入回车跳过 pause
 		p = Popen(rf"{convert_rp_bat_path}", shell=True, stdin=PIPE)
 		p.stdin.write(b"\r\n")
 		p.stdin.close()

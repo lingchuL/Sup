@@ -144,19 +144,58 @@ class XlsxHandler(object):
 
 		return row_values
 
-	def add_attr_name(self, attr_name_columns: [str], attr_name_row: str):
+	def add_attr_name(self, attr_name_col_list: [str], attr_name_row_num: int):
+		"""
+		添加对应列行索引的表格的值，作为表头以及属性名
+		:param attr_name_col_list: 属性名表格的列名的列表（Excel本身列名，如["A","AA"]为一对起始）
+		:param attr_name_row_num: 属性名表格的行序号
+		:return:
+		"""
 		if self.ws is None:
 			return
 
-		for attr_name in self.get_row_of_columns(attr_name_columns, attr_name_row):
+		# 通过列名获取属性名列表
+		attr_names = []
+		for col in attr_name_col_list:
+			if col not in self.attr_columns:
+				self.attr_columns.append(col)
+			cell_index = col + str(attr_name_row_num)
+			cell_value = self.ws[cell_index].value
+			attr_names.append(cell_value)
+
+		for attr_name in attr_names:
+			if attr_name not in self.attr_names:
+				self.attr_names.append(attr_name)
+
+	def add_attr_name_by_range(self, attr_name_columns: [str], attr_name_row_num: int):
+		"""
+		添加对应列行索引的表格的值，作为表头以及属性名
+		:param attr_name_columns: 属性名表格的列名的起始列表（Excel本身列名，如["A","AA"]为一对起始）
+		:param attr_name_row_num: 属性名表格的行序号
+		:return:
+		"""
+		if self.ws is None:
+			return
+
+		for attr_name in self.get_row_of_columns(attr_name_columns, str(attr_name_row_num)):
 			if attr_name not in self.attr_names:
 				self.attr_names.append(attr_name)
 
 	def get_attr_col_by_name(self, attr_name):
+		"""
+		通过属性名获取属性列
+		:param attr_name: 属性名（作为表头的表格的值，如“id”）
+		:return: 属性列（Excel本身列名，如“A”,“AU”等）
+		"""
 		assert len(self.attr_names) == len(self.attr_columns)
 		return self.attr_columns[self.attr_names.index(attr_name)]
 
 	def get_attr_name_by_col(self, attr_col):
+		"""
+		通过属性列获取属性名
+		:param attr_col: 属性列（Excel本身列名，如“A”,“AU”等）
+		:return: 属性名（作为表头的表格的值，如“id”）
+		"""
 		assert len(self.attr_names) == len(self.attr_columns)
 		return self.attr_names[self.attr_columns.index(attr_col)]
 
@@ -168,7 +207,7 @@ class XlsxHandler(object):
 	def write_save_row(self, row_num, attr_dict):
 		"""
 		写入某行的属性字典并保存
-		:param row_num: 行序号
+		:param row_num: Excel自带的行序号（如1, 2）
 		:param attr_dict: 属性字典，key为可以找到对应列序号的属性名， value为属性值
 		:return:
 		"""
@@ -183,7 +222,7 @@ class XlsxHandler(object):
 if __name__ == "__main__":
 	xlsx_handler = XlsxHandler()
 	xlsx_handler.load(r"E:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\1_体素配置_RP.xlsx")
-	xlsx_handler.add_attr_name(["C", "E"], "3")
+	xlsx_handler.add_attr_name_by_range(["C", "E"], "3")
 	print(xlsx_handler.attr_names)
 	column_handler = ColumnNumHandler()
 	# print(column_handler.num_of_col("AZ"))

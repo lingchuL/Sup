@@ -1,69 +1,23 @@
 import re
 
-from excel.xlsx_handle import XlsxHandler
-
-from pprint import pprint
+from base_class.cfg_handler import CfgHandler
 
 
-class InteractAudioCfgHandler(object):
-	def __init__(self):
-		self.xlsx_handler = XlsxHandler()
+class InteractAudioCfgHandler(CfgHandler):
+	def add_attr_names(self):
+		self.xlsx_handler.add_attr_name(["C", "D", "B"], 4)
+		self.xlsx_handler.add_attr_name_by_range(["AL", "AU"], 3)
 
-		self.rows = {}
-		self.row_nums = {}
-
-	def load(self, in_cfg_path):
-		self.xlsx_handler.load(in_cfg_path)
-		self.xlsx_handler.add_attr_name(["C", "D"], "4")
-		self.xlsx_handler.add_attr_name(["B", "B"], "4")
-		self.xlsx_handler.add_attr_name(["AL", "AU"], "3")
-
-	def init_main_key(self, main_key_name: str):
-		for i_row in range(self.xlsx_handler.ws.max_row):
-			row = {}
-			for attr_column in self.xlsx_handler.attr_columns:
-				cell_value = self.xlsx_handler.get_cell_of_col(attr_column, i_row + 1)
-				attr_name = self.xlsx_handler.get_attr_name_by_col(attr_column)
-				row[attr_name] = cell_value
-			self.rows[row[main_key_name]] = row
-			self.row_nums[row[main_key_name]] = i_row + 1
-
-	def close(self):
-		self.xlsx_handler.close()
-
-	def search_attr_by_id(self, in_id) -> dict:
-		if in_id not in self.rows:
-			return {}
-		# print(self.rows[in_id])
-		return self.rows[in_id]
-
-	def search(self, in_search):
-		result_rows = []
-		for row in self.rows.values():
-			for value in row.values():
-				if value is None:
-					continue
-				if in_search in str(value):
-					result_rows.append(row)
-					break
-		return result_rows
-
-	def search_with_audio_cfg(self, in_id):
-		rows = self.search(in_id)
-		result_rows = []
-
-		for row in rows:
-			row_id = row["id"]
-			row_dict = {
-				"id_": row["id"],
-				"desc": row["名字"],
-				"guid": row["guid"],
-				"sfx_start": self.get_sound_param(row_id, "sfx_start"),
-				"sfx_end": self.get_sound_param(row_id, "sfx_end"),
-			}
-			result_rows.append(row_dict)
-
-		return result_rows
+	def form_row_dict(self, in_row):
+		row_id = in_row["id"]
+		row_dict = {
+			"id_": in_row["id"],
+			"desc": in_row["名字"],
+			"guid": in_row["guid"],
+			"sfx_start": self.get_sound_param(row_id, "sfx_start"),
+			"sfx_end": self.get_sound_param(row_id, "sfx_end"),
+		}
+		return row_dict
 
 	def get_sound_param_attr_name(self, id_):
 		attr_dict = self.search_attr_by_id(id_)
@@ -160,8 +114,7 @@ class InteractAudioCfgHandler(object):
 
 if __name__ == "__main__":
 	interact_audio_cfg_handler = InteractAudioCfgHandler()
-	interact_audio_cfg_handler.load(r"E:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\1_体素配置_RP.xlsx")
-	interact_audio_cfg_handler.init_main_key("id")
+	interact_audio_cfg_handler.load(r"E:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\1_体素配置_RP.xlsx", "id")
 	print(interact_audio_cfg_handler.xlsx_handler.attr_names)
 	# pprint(interact_audio_cfg_handler.rows)
 	# pprint(interact_audio_cfg_handler.search("Drum_Stand_Instrument"))
