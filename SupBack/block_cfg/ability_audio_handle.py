@@ -17,8 +17,8 @@ class AbilityAudioCfgHandler(CfgHandler):
 		attr_display_names = ["desc", "triggerEventTags", "finishEventTags", "castSfx", "castSfxTime"]
 		for attr_name in attr_display_names:
 			attr_value = in_row[attr_name]
-			if attr_value is None or attr_value == "":
-				attr_value = "None"
+			# if attr_value is None or attr_value == "":
+			# 	attr_value = "None"
 			row_dict["attr_values"].append(attr_value)
 			row_dict["attr_is_editable"].append(False)
 
@@ -86,6 +86,9 @@ class ItemCfgHandler(CfgHandler):
 		action_col = self.xlsx_handler.col_handler.col_of_num(action_index)
 
 		_action_tag: str = attr_dict[action_col]
+		if _action_tag is None or _action_tag == "":
+			return ""
+
 		_action_tag = _action_tag.replace(r",", "")
 		_action_tag = _action_tag.replace("\"", "")
 
