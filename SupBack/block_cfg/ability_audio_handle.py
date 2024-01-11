@@ -7,6 +7,23 @@ class AbilityAudioCfgHandler(CfgHandler):
 		self.xlsx_handler.add_attr_name_range(["G", "H"], 4)
 		self.xlsx_handler.add_attr_name_range(["V", "W"], 4)
 
+	def form_row(self, in_row: dict) -> dict:
+		row_dict = {
+			"key": in_row["pk"],
+			"attr_names": ["desc", "triggerEventTags", "finishEventTags", "castSfx", "castSfxTime"],
+			"attr_values": [],
+			"attr_is_editable": []
+		}
+		attr_display_names = ["desc", "triggerEventTags", "finishEventTags", "castSfx", "castSfxTime"]
+		for attr_name in attr_display_names:
+			attr_value = in_row[attr_name]
+			if attr_value is None or attr_value == "":
+				attr_value = "None"
+			row_dict["attr_values"].append(attr_value)
+			row_dict["attr_is_editable"].append(False)
+
+		return row_dict
+
 	def set_attr_dict(self, in_attr_dict):
 		pk = in_attr_dict["pk"]
 		attr_dict = self.search_row_by_id(pk)
@@ -20,7 +37,6 @@ class AbilityAudioCfgHandler(CfgHandler):
 
 
 class EntityCfgHandler(CfgHandler):
-
 	def add_attr_names(self):
 		self.xlsx_handler.add_attr_name(["C", "B"], 4)
 		self.xlsx_handler.add_attr_name_range(["K", "AG"], 4)
@@ -37,7 +53,25 @@ class EntityCfgHandler(CfgHandler):
 class ItemCfgHandler(CfgHandler):
 	def add_attr_names(self):
 		self.xlsx_handler.add_attr_name(["C", "B", "R"], 4)
+		self.xlsx_handler.add_attr_name_range(["X", "Z"], 3)
 		self.xlsx_handler.add_attr_name_range(["AA", "AC"], 4)
+
+	def form_row(self, in_row: dict) -> dict:
+		row_dict = {
+			"key": in_row["pk"],
+			"attr_names": ["name", "entityPk", "action1", "action2", "action3"],
+			"attr_values": [],
+			"attr_is_editable": []
+		}
+		attr_display_names = ["名字", "entityPk", "动作1", "动作2", "动作3"]
+		for attr_name in attr_display_names:
+			attr_value = in_row[attr_name]
+			if attr_value is None or attr_value == "":
+				attr_value = "None"
+			row_dict["attr_values"].append(attr_value)
+			row_dict["attr_is_editable"].append(False)
+
+		return row_dict
 
 	def get_entity_pk(self, in_pk):
 		attr_dict = self.search_row_by_id(in_pk)
@@ -65,6 +99,7 @@ if __name__ == "__main__":
 	item_cfg_handler = ItemCfgHandler()
 	item_cfg_handler.load(r"e:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\3_物品配置_RP.xlsx", "pk", 0)
 	item_attr_dict = item_cfg_handler.search_row_by_id(item_pk)
+	print(item_cfg_handler.search_row_list(item_pk))
 	assert "名字" in item_attr_dict.keys()
 	item_name = item_attr_dict["名字"]
 	entity_pk = item_cfg_handler.get_entity_pk(item_pk)
@@ -91,4 +126,5 @@ if __name__ == "__main__":
 	entity_handler = EntityCfgHandler()
 	entity_handler.load(r"e:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\2_Entity配置_RP.xlsx", "pk", 0)
 	entity_handler.add_ability(entity_pk, ability_pk)
-	print(f"Entity配置 {entity_handler.search_row_by_id(entity_pk)}")
+	# print(f"Entity配置 {entity_handler.search_row_by_id(entity_pk)}")
+	print(entity_handler.search_row_list(entity_pk))

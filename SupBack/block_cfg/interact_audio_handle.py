@@ -8,7 +8,7 @@ class InteractAudioCfgHandler(CfgHandler):
 		self.xlsx_handler.add_attr_name(["C", "D", "B"], 4)
 		self.xlsx_handler.add_attr_name_range(["AL", "AU"], 3)
 
-	def form_row_dict(self, in_row):
+	def form_row(self, in_row):
 		row_id = in_row["id"]
 		row_dict = {
 			"id_": in_row["id"],
@@ -88,9 +88,10 @@ if __name__ == "__main__":
 	interact_audio_cfg_handler.load(r"E:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\1_体素配置_RP.xlsx", "id")
 	print(interact_audio_cfg_handler.xlsx_handler.attr_names)
 	# pprint(interact_audio_cfg_handler.rows)
-	# pprint(interact_audio_cfg_handler.search("Drum_Stand_Instrument"))
+	print(interact_audio_cfg_handler.search("Drum_Stand_Instrument"))
+	print(interact_audio_cfg_handler.search_row_list("Drum_Stand_Instrument"))
 	# interact_audio_cfg_handler.set_rp_interact_sound("Piano", "HO_Drum_Skill_Play2", "sfx_start")
 	# interact_audio_cfg_handler.set_rp_interact_sound("Piano", ["HO_Drum_Skill_Play"], "sfx_start")
 	# interact_audio_cfg_handler.set_rp_interact_sound("Piano", ["HO_Drum_Skill_Play", "HO_Guitar_Skill_Play"], "sfx_end")
 	# interact_audio_cfg_handler.remove_rp_interact_sound("Piano", "sfx_start")
-	interact_audio_cfg_handler.write_save_id("Drum_Stand_Instrument")
+	# interact_audio_cfg_handler.write_save_id("Drum_Stand_Instrument")

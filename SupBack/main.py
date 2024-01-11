@@ -10,6 +10,7 @@ from audio.freq_note_handle import FreqNoteTrans
 from audio.bpm_handle import BPMHandler
 
 from block_cfg.interact_audio_receiver import InteractAudioReceiver
+from block_cfg.ability_audio_receiver import AbilityAudioCfgReceiver
 
 app = Flask(__name__)
 CORS(app)
@@ -177,5 +178,10 @@ def bpm_handle():
 @app.route('/cfg', methods=["GET"])
 def interact_audio_handle():
 	print(request.args)
-	receiver = InteractAudioReceiver(request.args)
+	type_name = request.args.get("type")
+	receiver = None
+	if type_name == "rp_interact":
+		receiver = InteractAudioReceiver(request.args)
+	elif type_name == "ability":
+		receiver = AbilityAudioCfgReceiver(request.args)
 	return receiver.handle_action()

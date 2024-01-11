@@ -87,15 +87,15 @@ export async function TransBPMSPB(bpm: string, spb: string): Promise<string> {
     return data_text
 }
 
-export async function CallRPInteractAudioCfgAction(params: Map<string, string>): Promise<string> {
+export async function CallCfgAudioAction(params: Map<string, string>): Promise<string> {
     let url_param = ""
     params.forEach(function(value, key) {
         url_param += "&" + key + "=" + value
     })
-    let call_rp_audio_url = encodeURI('http://127.0.0.1:8133/cfg?' + url_param)
+    let cfg_audio_url = encodeURI('http://127.0.0.1:8133/cfg?' + url_param)
 
-    console.log(call_rp_audio_url)
-    const res = await fetch(call_rp_audio_url, {
+    console.log(cfg_audio_url)
+    const res = await fetch(cfg_audio_url, {
         headers: {
             "Content-Type": "text/json"
         },

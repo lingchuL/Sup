@@ -9,7 +9,7 @@ import * as React from "react";
 import {CircularProgress, Divider, FormControlLabel, IconButton, Snackbar, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import {CallFileAction, CallRPInteractAudioCfgAction} from "@/app/api/route";
+import {CallFileAction, CallCfgAudioAction} from "@/app/api/route";
 import SearchIcon from "@mui/icons-material/Search";
 import SaveIcon from '@mui/icons-material/Save';
 import {useState} from "react";
@@ -55,12 +55,13 @@ function SearchedAttrs({attrs, cfgPath, setParam}: AttrArray) {
                     <IconButton key={crypto.randomUUID()}
                                 onClick={()=> {
                                     let params = new Map<string, string>()
+                                    params.set("type", "rp_interact")
                                     params.set("action", "write_save_id")
                                     params.set("cfgFilePath", encodeURIComponent(cfgPath))
                                     params.set("search", encodeURIComponent(attr.id_))
                                     params.set("sfx_start", attr.sfx_start)
                                     params.set("sfx_end", attr.sfx_end)
-                                    CallRPInteractAudioCfgAction(params).then((value)=>{
+                                    CallCfgAudioAction(params).then((value)=>{
                                         console.log(value)
                                         setShowInfo(true)
                                     })
@@ -117,10 +118,11 @@ function AudioCfg() {
                     <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions"
                                 onClick={()=> {
                                     let params = new Map<string, string>()
+                                    params.set("type", "rp_interact")
                                     params.set("action", "search")
                                     params.set("cfgFilePath", encodeURIComponent(cfgFilePath))
                                     params.set("search", encodeURIComponent(searchName))
-                                    CallRPInteractAudioCfgAction(params).then(value => {
+                                    CallCfgAudioAction(params).then(value => {
                                         const resp : Resp = JSON.parse(value)
                                         console.log(resp.result)
                                         setSearchAttrs(resp.result)
@@ -132,9 +134,10 @@ function AudioCfg() {
                         onClick={()=> {
                             setIsLoading(true)
                             let params = new Map<string, string>()
+                            params.set("type", "rp_interact")
                             params.set("action", "convert_rp_cfg")
                             params.set("cfgFilePath", encodeURIComponent(cfgFilePath))
-                            CallRPInteractAudioCfgAction(params).then(value => {
+                            CallCfgAudioAction(params).then(value => {
                                 const resp : Resp = JSON.parse(value)
                                 console.log(resp.result)
                                 setIsLoading(false)

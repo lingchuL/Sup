@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import {useState} from "react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import {CallRPInteractAudioCfgAction} from "@/app/api/route";
+import {CallCfgAudioAction} from "@/app/api/route";
 import SaveIcon from "@mui/icons-material/Save";
 
 interface Resp {
@@ -60,7 +60,7 @@ function SearchedAttrs({attrs, cfgPath, setParam}: AttrArray) {
                                     params.set("search", encodeURIComponent(attr.id_))
                                     params.set("sfx_start", attr.sfx_start)
                                     params.set("sfx_end", attr.sfx_end)
-                                    CallRPInteractAudioCfgAction(params).then((value)=>{
+                                    CallCfgAudioAction(params).then((value)=>{
                                         console.log(value)
                                         setShowInfo(true)
                                     })

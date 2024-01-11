@@ -47,12 +47,11 @@ class InteractAudioReceiver(RequestReceiver):
 		handler = InteractAudioCfgHandler()
 		handler.load(cfg_file_path, "id")
 
-		search_result = handler.get_row_dict_list(search_name)
+		search_result = handler.search_row_list(search_name)
 
 		status_code = "0"
 
-		result_dict = {"result": search_result, "status": status_code}
-		return result_dict
+		return self.form_result_dict(search_result, status_code)
 
 	def write_save_id(self):
 		cfg_file_path_encoded = self.arg_dict["cfgFilePath"]
@@ -81,8 +80,7 @@ class InteractAudioReceiver(RequestReceiver):
 
 		status_code = "0"
 
-		result_dict = {"result": "Finished", "status": status_code}
-		return result_dict
+		return self.form_result_dict("Finished", status_code)
 
 	def convert_rp_cfg(self):
 		cfg_file_path_encoded = self.arg_dict["cfgFilePath"]
@@ -105,5 +103,4 @@ class InteractAudioReceiver(RequestReceiver):
 		else:
 			status_code = "-1"
 
-		result_dict = {"result": "Finished", "status": status_code}
-		return result_dict
+		return self.form_result_dict("Finished", status_code)

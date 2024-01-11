@@ -10,6 +10,8 @@ class CfgHandler(object):
 		self.rows = {}
 		self.row_nums = {}
 
+		self.display_attr_dict = {}
+
 	def load(self, in_cfg_path, main_key_name: str, sheet_index=0):
 		self.xlsx_handler.load(in_cfg_path, sheet_index)
 		self.add_attr_names()
@@ -50,20 +52,31 @@ class CfgHandler(object):
 					break
 		return result_rows
 
-	def get_row_dict_list(self, in_main_key_value):
-		rows = self.search(in_main_key_value)
-		result_rows = []
+	def search_row_list(self, in_search):
+		"""
+		获得搜索结果的数据，子类重写self.form_row_dict方法，返回用于展示的数据字典列表
+		:param in_search:
+		:return:
+		"""
+		rows = self.search(in_search)
+		result_row_list = []
 
 		for row in rows:
-			result_rows.append(self.form_row_dict(row))
+			result_row_list.append(self.form_row(row))
 
-		return result_rows
+		return result_row_list
 
-	def form_row_dict(self, in_row: dict) -> dict:
+	@staticmethod
+	def form_value_prop(attr_value, is_editable: bool = False):
+		return {"attr_value": attr_value, "is_editable": is_editable}
+
+	def form_row(self, in_row: dict) -> dict:
 		result_dict = {}
 		for attr_name in self.xlsx_handler.attr_names:
 			assert attr_name in in_row
-			result_dict[attr_name] = in_row[attr_name]
+			if in_row[attr_name] is None or in_row[attr_name] == "":
+				continue
+			result_dict[attr_name] = self.form_value_prop(in_row[attr_name])
 
 		return result_dict
 
