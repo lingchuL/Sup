@@ -3,7 +3,7 @@ from base_class.cfg_handler import CfgHandler
 
 class AbilityAudioCfgHandler(CfgHandler):
 	def add_attr_names(self):
-		self.xlsx_handler.add_attr_name(["B", "A", "C"], 4)
+		self.xlsx_handler.add_attr_name(["B", "A", "C", "E"], 4)
 		self.xlsx_handler.add_attr_name_range(["G", "H"], 4)
 		self.xlsx_handler.add_attr_name_range(["V", "W"], 4)
 
@@ -45,7 +45,7 @@ class EntityCfgHandler(CfgHandler):
 		attr_dict = self.search_row_by_id(in_pk)
 
 		attr_name = self.get_first_match_attr_name(in_pk, in_ability_name)
-		attr_dict[attr_name] = in_ability_name
+		attr_dict[attr_name] = f"_{in_ability_name}"
 
 		self.set_row_dict(in_pk, attr_dict)
 
@@ -80,9 +80,10 @@ class ItemCfgHandler(CfgHandler):
 		else:
 			return ""
 
-	def get_action_tag(self, in_pk, in_action_index):
+	def get_action_tag(self, in_pk, in_action_index_str: str):
+		action_index = int(in_action_index_str) - 1
 		attr_dict = self.search_row_by_id(in_pk)
-		action_index = self.xlsx_handler.col_handler.num_of_col("AA") + in_action_index
+		action_index = self.xlsx_handler.col_handler.num_of_col("AA") + action_index
 		action_col = self.xlsx_handler.col_handler.col_of_num(action_index)
 
 		_action_tag: str = attr_dict[action_col]

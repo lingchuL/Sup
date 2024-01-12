@@ -9,10 +9,16 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import * as React from "react";
 import {useState} from "react";
-import {Row, UpdateRows, formAttr, CfgProps, AttrProperty, AttrRowsArgs} from "@/app/main/config/audio_cfg";
+import {Row, GetNewRows, formAttr, CfgProps, AttrProperty, AttrRowsArgs} from "@/app/main/config/audio_cfg";
 import SaveIcon from "@mui/icons-material/Save";
 
 interface ItemAttrArgs {
+    project_dir: string
+    rows: Row[],
+    setAbilities: (rows: Row[]) => void
+}
+
+interface AbilityAttrArgs {
     project_dir: string
     rows: Row[],
     setAbilities: (rows: Row[]) => void
@@ -76,7 +82,9 @@ function ItemAttrRows({project_dir, rows, setAbilities}: ItemAttrArgs) {
     )
 }
 
-function AbilityAttrRows({rows}: AttrRowsArgs) {
+function AbilityAttrRows({project_dir, rows, setAbilities}: AbilityAttrArgs) {
+    const [showInfo, setShowInfo] = useState(false)
+
     return (
         rows?.map((row) => (
             <Grid container direction="row">
@@ -94,8 +102,8 @@ function AbilityAttrRows({rows}: AttrRowsArgs) {
                             {idx > 2 && (
                                 <TextField variant="outlined" value={row.attr_values.at(idx)}
                                            onChange={(v) => {
-                                               row = formAttr(row.key, attr_name, v.target.value)
-                                               UpdateRows(rows, row)
+                                               let newRows = GetNewRows(rows, row.key, attr_name, v.target.value)
+                                               setAbilities(newRows)
                                            }}>
                                 </TextField>
                             )}
@@ -104,9 +112,30 @@ function AbilityAttrRows({rows}: AttrRowsArgs) {
                 }
                 <Divider key={crypto.randomUUID()}/>
                 <IconButton key={crypto.randomUUID()}
+                            onClick={() => {
+                                let params = new Map<string, string>()
+                                params.set("type", "ability")
+                                params.set("action", "write_save_ability")
+                                params.set("projectDir", encodeURIComponent(project_dir))
+                                params.set("search", encodeURIComponent(row.key))
+                                params.set("desc", row.attr_values.at(0) as string)
+                                params.set("castSfx", row.attr_values.at(-2) as string)
+                                params.set("castSfxTime", row.attr_values.at(-1) as string)
+                                CallCfgAudioAction(params).then((value) => {
+                                    const resp: Resp = JSON.parse(value)
+                                    console.log(resp.result)
+                                    setShowInfo(true)
+                                })
+                            }}
                 >
                     <SaveIcon/>
                 </IconButton>
+                <Snackbar
+                    open={showInfo}
+                    autoHideDuration={5000}
+                    message="成功"
+                    onClose={()=>{setShowInfo(false)}}
+                />
             </Grid>
         ))
     )
@@ -152,6 +181,7 @@ export default function AbilityAudioCfgPage(prop: CfgProps) {
                                         const resp: Resp = JSON.parse(value)
                                         console.log(resp.result)
                                         setItemRows(resp.result)
+                                        setAbilityRows([])
                                         console.log(itemRows)
                                     })
                                 }}>
@@ -188,7 +218,6 @@ export default function AbilityAudioCfgPage(prop: CfgProps) {
                 </p>
                 <Divider/>
                 <Paper>
-                    {/*<ItemAttrRows rows={itemRows}/>*/}
                     <ItemAttrRows project_dir={projectDir} rows={itemRows} setAbilities={setAbilityRows}/>
                 </Paper>
                 <p>
@@ -196,8 +225,7 @@ export default function AbilityAudioCfgPage(prop: CfgProps) {
                 </p>
                 <Divider/>
                 <Paper>
-                    {/*<AbilityAttrRows rows={abilityRows}/>*/}
-                    <AbilityAttrRows project_dir={projectDir} rows={abilityRows}/>
+                    <AbilityAttrRows project_dir={projectDir} rows={abilityRows} setAbilities={setAbilityRows}/>
                 </Paper>
             </Grid>
         </div>
