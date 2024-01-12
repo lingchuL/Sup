@@ -16,7 +16,7 @@ class InteractAudioReceiver(RequestReceiver):
 	def init_arg_name_list(self):
 		self.arg_name_list = [
 			"action",
-			"cfgFilePath",
+			"projectDir",
 			"column",
 			"search",
 			"sfx_start",
@@ -37,11 +37,10 @@ class InteractAudioReceiver(RequestReceiver):
 		return resp
 
 	def search(self):
-		cfg_file_path_encoded = self.arg_dict["cfgFilePath"]
-		cfg_file_path = unquote(cfg_file_path_encoded)
+		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
+		cfg_file_path = os.path.join(project_dir, self.settings.voxel_relative_path)
 
-		search_name_encoded = self.arg_dict["search"]
-		search_name = unquote(search_name_encoded)
+		search_name = self.unquote_arg(self.arg_dict["search"])
 
 		# print(cfg_file_path)
 		handler = InteractAudioCfgHandler()
@@ -54,8 +53,8 @@ class InteractAudioReceiver(RequestReceiver):
 		return self.form_result_dict(search_result, status_code)
 
 	def write_save_id(self):
-		cfg_file_path_encoded = self.arg_dict["cfgFilePath"]
-		cfg_file_path = unquote(cfg_file_path_encoded)
+		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
+		cfg_file_path = os.path.join(project_dir, self.settings.voxel_relative_path)
 
 		id_ = self.arg_dict["search"]
 		sfx_start = self.arg_dict["sfx_start"]
@@ -83,11 +82,8 @@ class InteractAudioReceiver(RequestReceiver):
 		return self.form_result_dict("Finished", status_code)
 
 	def convert_rp_cfg(self):
-		cfg_file_path_encoded = self.arg_dict["cfgFilePath"]
-		cfg_file_path = unquote(cfg_file_path_encoded)
-
-		convert_rp_bat_dir = os.path.dirname(os.path.dirname(cfg_file_path))
-		convert_rp_bat_path = os.path.join(convert_rp_bat_dir, "转表_仅RP游戏.bat")
+		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
+		convert_rp_bat_path = os.path.join(project_dir, self.settings.convert_rp_cfg_relative_path)
 
 		print(convert_rp_bat_path)
 

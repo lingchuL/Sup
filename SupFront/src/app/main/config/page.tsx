@@ -72,7 +72,7 @@ export default function BasicTabs() {
                 <EnvTreeCfgPage />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-                <RPInteractAudioCfgPage />
+                <RPInteractAudioCfgPage project_dir={projectDir}/>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
                 <AbilityAudioCfgPage project_dir={projectDir} />

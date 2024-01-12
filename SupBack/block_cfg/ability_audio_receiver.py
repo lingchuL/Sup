@@ -1,19 +1,10 @@
 import os.path
 
-from flask import Response, Request
-
 from base_class.request_receiver import RequestReceiver
 from block_cfg.ability_audio_handle import ItemCfgHandler, EntityCfgHandler, AbilityAudioCfgHandler
 
 
 class AbilityAudioCfgReceiver(RequestReceiver):
-	def __init__(self, in_request_args: Request.args):
-		super().__init__(in_request_args)
-
-		self.item_relative_path = r"Client\Data\JungoTownRP\3_物品配置_RP.xlsx"
-		self.entity_relative_path = r"Client\Data\JungoTownRP\2_Entity配置_RP.xlsx"
-		self.ability_relative_path = r"Client\Data\JungoWorld\Ability.xlsx"
-
 	def init_arg_name_list(self):
 		self.arg_name_list = [
 			"action",
@@ -33,12 +24,16 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 			result_dict = self.search_ability()
 		elif self.arg_dict["action"] == "write_save_ability":
 			result_dict = self.write_save_ability()
+		elif self.arg_dict["action"] == "convert_cfg":
+			result_dict = self.convert_cfg()
+		elif self.arg_dict["action"] == "delete_ability":
+			result_dict = self.delete_ability()
 
 		return self.form_response(result_dict)
 
 	def search_item(self):
 		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
-		item_cfg_path = os.path.join(project_dir, self.item_relative_path)
+		item_cfg_path = os.path.join(project_dir, self.settings.item_relative_path)
 		search_name = self.unquote_arg(self.arg_dict["search"])
 
 		item_cfg_handler = ItemCfgHandler()
@@ -48,7 +43,7 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 
 	def search_ability(self):
 		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
-		ability_cfg_path = os.path.join(project_dir, self.ability_relative_path)
+		ability_cfg_path = os.path.join(project_dir, self.settings.ability_relative_path)
 		item_pk = self.unquote_arg(self.arg_dict["search"])
 		action_index = self.arg_dict["action_name"]
 
@@ -68,7 +63,7 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 			if result_list:
 				return self.form_result_dict(result_list, "0")
 			else:
-				item_cfg_path = os.path.join(project_dir, self.item_relative_path)
+				item_cfg_path = os.path.join(project_dir, self.settings.item_relative_path)
 
 				item_cfg_handler = ItemCfgHandler()
 				item_cfg_handler.load(item_cfg_path, "pk", 0)
@@ -89,7 +84,7 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 					"castSfxTime": 0
 				})
 		else:
-			item_cfg_path = os.path.join(project_dir, self.item_relative_path)
+			item_cfg_path = os.path.join(project_dir, self.settings.item_relative_path)
 
 			item_cfg_handler = ItemCfgHandler()
 			item_cfg_handler.load(item_cfg_path, "pk", 0)
@@ -126,11 +121,11 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 		cast_sfx = self.arg_dict["castSfx"]
 		cast_sfx_time = self.arg_dict["castSfxTime"]
 
-		item_cfg_path = os.path.join(project_dir, self.item_relative_path)
+		item_cfg_path = os.path.join(project_dir, self.settings.item_relative_path)
 		item_cfg_handler = ItemCfgHandler()
 		item_cfg_handler.load(item_cfg_path, "pk", 0)
 
-		ability_cfg_path = os.path.join(project_dir, self.ability_relative_path)
+		ability_cfg_path = os.path.join(project_dir, self.settings.ability_relative_path)
 		ability_cfg_handler = AbilityAudioCfgHandler()
 		ability_cfg_handler.load(ability_cfg_path, "pk", 6)
 
@@ -150,13 +145,53 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 		ability_cfg_handler.write_save_id(ability_pk)
 
 		entity_pk = item_cfg_handler.get_entity_pk(item_pk)
-		entity_cfg_path = os.path.join(project_dir, self.entity_relative_path)
+		entity_cfg_path = os.path.join(project_dir, self.settings.entity_relative_path)
 
 		entity_handler = EntityCfgHandler()
 		entity_handler.load(entity_cfg_path, "pk", 0)
-		entity_handler.add_ability(entity_pk, ability_pk)
+		entity_handler.set_ability_or_add(entity_pk, ability_pk)
 		# print(f"Entity配置 {entity_handler.search_row_by_id(entity_pk)}")
 		entity_handler.write_save_id(entity_pk)
 
-		return self.form_result_dict("Finished", "0")
+		result_list = ability_cfg_handler.search_row_list(ability_pk[:-2])
+		return self.form_result_dict(result_list, "0")
 
+	def convert_cfg(self):
+		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
+		rp_bat_path = os.path.join(project_dir, self.settings.convert_rp_cfg_relative_path)
+		ability_bat_path = os.path.join(project_dir, self.settings.convert_ability_cfg_relative_path)
+
+		print(rp_bat_path)
+
+		rp_ret_code = self.call_convert_cfg_bat(rp_bat_path)
+		ability_ret_code = self.call_convert_cfg_bat(ability_bat_path)
+
+		if rp_ret_code == 0 and ability_ret_code == "0":
+			status_code = "0"
+		else:
+			status_code = "-1"
+
+		return self.form_result_dict("Finished", status_code)
+
+	def delete_ability(self):
+		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
+		ability_pk = self.unquote_arg(self.arg_dict["search"])
+
+		ability_cfg_path = os.path.join(project_dir, self.settings.ability_relative_path)
+		ability_cfg_handler = AbilityAudioCfgHandler()
+		ability_cfg_handler.load(ability_cfg_path, "pk", 6)
+		ability_cfg_handler.delete_id(ability_pk)
+
+		item_pk = ability_pk[:-2]
+		item_cfg_path = os.path.join(project_dir, self.settings.item_relative_path)
+		item_cfg_handler = ItemCfgHandler()
+		item_cfg_handler.load(item_cfg_path, "pk", 0)
+		entity_pk = item_cfg_handler.get_entity_pk(item_pk)
+		entity_cfg_path = os.path.join(project_dir, self.settings.entity_relative_path)
+
+		entity_handler = EntityCfgHandler()
+		entity_handler.load(entity_cfg_path, "pk", 0)
+		entity_handler.delete_ability(entity_pk, ability_pk)
+
+		result_list = ability_cfg_handler.search_row_list(ability_pk[:-2])
+		return self.form_result_dict(result_list, "0")

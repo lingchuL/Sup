@@ -11,6 +11,7 @@ import * as React from "react";
 import {useState} from "react";
 import {Row, GetNewRows, formAttr, CfgProps, AttrProperty, AttrRowsArgs} from "@/app/main/config/audio_cfg";
 import SaveIcon from "@mui/icons-material/Save";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface ItemAttrArgs {
     project_dir: string
@@ -130,6 +131,23 @@ function AbilityAttrRows({project_dir, rows, setAbilities}: AbilityAttrArgs) {
                 >
                     <SaveIcon/>
                 </IconButton>
+                <IconButton key={crypto.randomUUID()}
+                            onClick={() => {
+                                let params = new Map<string, string>()
+                                params.set("type", "ability")
+                                params.set("action", "delete_ability")
+                                params.set("projectDir", encodeURIComponent(project_dir))
+                                params.set("search", encodeURIComponent(row.key))
+                                CallCfgAudioAction(params).then((value) => {
+                                    const resp: Resp = JSON.parse(value)
+                                    console.log(resp.result)
+                                    setAbilities(resp.result)
+                                    setShowInfo(true)
+                                })
+                            }}
+                >
+                    <DeleteIcon/>
+                </IconButton>
                 <Snackbar
                     open={showInfo}
                     autoHideDuration={5000}
@@ -149,7 +167,6 @@ interface Resp {
 
 
 export default function AbilityAudioCfgPage(prop: CfgProps) {
-    const [cfgFilePath, setCfgFilePath] = React.useState("e:\\Workflow\\Block-wangjunyi.42-trunk\\Client\\Data\\JungoTownRP\\1_体素配置_RP.xlsx");
     const [searchName, setSearchName] = React.useState("");
     const [itemRows, setItemRows] = React.useState<Row[]>([]);
     const [abilityRows, setAbilityRows] = React.useState<Row[]>([]);
@@ -158,10 +175,6 @@ export default function AbilityAudioCfgPage(prop: CfgProps) {
     const [showInfo, setShowInfo] = useState(false)
 
     const projectDir = prop.project_dir
-
-    function setAbilities(rows: Row[]) {
-        setAbilityRows(rows)
-    }
 
     return (
         <div>
@@ -172,6 +185,9 @@ export default function AbilityAudioCfgPage(prop: CfgProps) {
                     </TextField>
                     <IconButton color="primary" sx={{p: '10px'}} aria-label="directions"
                                 onClick={() => {
+                                    if (searchName == "") {
+                                        return
+                                    }
                                     let params = new Map<string, string>()
                                     params.set("type", "ability")
                                     params.set("action", "search_item")

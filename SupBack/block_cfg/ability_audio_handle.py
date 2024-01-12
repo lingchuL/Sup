@@ -31,9 +31,12 @@ class AbilityAudioCfgHandler(CfgHandler):
 		for attr_name in in_attr_dict.keys():
 			attr_dict[attr_name] = in_attr_dict[attr_name]
 
-		self.set_row_dict(pk, attr_dict)
+		self.set_row_dict_or_add(pk, attr_dict)
 
 		print(self.search_row_by_id(pk))
+
+	def delete(self, id_: str):
+		self.delete_id(id_)
 
 
 class EntityCfgHandler(CfgHandler):
@@ -41,13 +44,23 @@ class EntityCfgHandler(CfgHandler):
 		self.xlsx_handler.add_attr_name(["C", "B"], 4)
 		self.xlsx_handler.add_attr_name_range(["K", "AG"], 4)
 
-	def add_ability(self, in_pk, in_ability_name):
+	def set_ability_or_add(self, in_pk, in_ability_name):
 		attr_dict = self.search_row_by_id(in_pk)
 
-		attr_name = self.get_first_match_attr_name(in_pk, in_ability_name)
-		attr_dict[attr_name] = f"_{in_ability_name}"
+		ability_name = f"_{in_ability_name}"
+		attr_name = self.get_first_match_attr_name(in_pk, ability_name)
+		attr_dict[attr_name] = ability_name
 
-		self.set_row_dict(in_pk, attr_dict)
+		self.set_row_dict_or_add(in_pk, attr_dict)
+
+	def delete_ability(self, in_pk, in_ability_name):
+		attr_dict = self.search_row_by_id(in_pk)
+
+		ability_name = f"_{in_ability_name}"
+		attr_name = self.get_first_match_attr_name(in_pk, ability_name)
+		attr_dict[attr_name] = ""
+
+		self.set_row_dict_or_add(in_pk, attr_dict)
 
 
 class ItemCfgHandler(CfgHandler):
@@ -129,6 +142,6 @@ if __name__ == "__main__":
 
 	entity_handler = EntityCfgHandler()
 	entity_handler.load(r"e:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\2_Entity配置_RP.xlsx", "pk", 0)
-	entity_handler.add_ability(entity_pk, ability_pk)
+	entity_handler.set_ability_or_add(entity_pk, ability_pk)
 	# print(f"Entity配置 {entity_handler.search_row_by_id(entity_pk)}")
 	print(entity_handler.search_row_list(entity_pk))

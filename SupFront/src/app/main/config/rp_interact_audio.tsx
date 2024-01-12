@@ -13,6 +13,7 @@ import {CallFileAction, CallCfgAudioAction} from "@/app/api/route";
 import SearchIcon from "@mui/icons-material/Search";
 import SaveIcon from '@mui/icons-material/Save';
 import {useState} from "react";
+import {CfgProps} from "@/app/main/config/audio_cfg";
 
 interface Resp {
     result: Attr[]
@@ -29,11 +30,11 @@ interface Attr {
 
 interface AttrArray {
     attrs: Attr[]
-    cfgPath: string
+    projectDir: string
     setParam: (id: string, param_name: string, param_value: string) => void
 }
 
-function SearchedAttrs({attrs, cfgPath, setParam}: AttrArray) {
+function SearchedAttrs({attrs, projectDir, setParam}: AttrArray) {
     const [showInfo, setShowInfo] = useState(false)
 
     return (
@@ -52,22 +53,24 @@ function SearchedAttrs({attrs, cfgPath, setParam}: AttrArray) {
                     }}>
                     </TextField>
                     <Divider key={crypto.randomUUID()}/>
-                    <IconButton key={crypto.randomUUID()}
-                                onClick={()=> {
-                                    let params = new Map<string, string>()
-                                    params.set("type", "rp_interact")
-                                    params.set("action", "write_save_id")
-                                    params.set("cfgFilePath", encodeURIComponent(cfgPath))
-                                    params.set("search", encodeURIComponent(attr.id_))
-                                    params.set("sfx_start", attr.sfx_start)
-                                    params.set("sfx_end", attr.sfx_end)
-                                    CallCfgAudioAction(params).then((value)=>{
-                                        console.log(value)
-                                        setShowInfo(true)
-                                    })
-                                }}>
-                        <SaveIcon />
-                    </IconButton>
+                    {showSave && (
+                        <IconButton key={crypto.randomUUID()}
+                                    onClick={()=> {
+                                        let params = new Map<string, string>()
+                                        params.set("type", "rp_interact")
+                                        params.set("action", "write_save_id")
+                                        params.set("projectDir", encodeURIComponent(projectDir))
+                                        params.set("search", encodeURIComponent(attr.id_))
+                                        params.set("sfx_start", attr.sfx_start)
+                                        params.set("sfx_end", attr.sfx_end)
+                                        CallCfgAudioAction(params).then((value)=>{
+                                            console.log(value)
+                                            setShowInfo(true)
+                                        })
+                                    }}>
+                            <SaveIcon />
+                        </IconButton>
+                    )}
                     <Snackbar
                         open={showInfo}
                         autoHideDuration={5000}
@@ -81,8 +84,7 @@ function SearchedAttrs({attrs, cfgPath, setParam}: AttrArray) {
 }
 
 
-function AudioCfg() {
-    const [cfgFilePath, setCfgFilePath] = React.useState("e:\\Workflow\\Block-wangjunyi.42-trunk\\Client\\Data\\JungoTownRP\\1_体素配置_RP.xlsx");
+function AudioCfg(prop: CfgProps) {
     const [searchName, setSearchName] = React.useState("");
     const [searchAttrs, setSearchAttrs] = React.useState<Attr[]>([]);
 
@@ -108,19 +110,19 @@ function AudioCfg() {
     return (
         <div>
             <Grid item xs={12} flexDirection='column' display='flex'>
-                <TextField variant="outlined" value={cfgFilePath} onChange={(v) => setCfgFilePath(v.target.value)
-                }>
-                </TextField>
                 <Container>
                     <TextField variant="outlined" value={searchName} onChange={(v) => setSearchName(v.target.value)
                     }>
                     </TextField>
                     <IconButton color="primary" sx={{ p: '10px' }} aria-label="directions"
                                 onClick={()=> {
+                                    if (searchName == "") {
+                                        return
+                                    }
                                     let params = new Map<string, string>()
                                     params.set("type", "rp_interact")
                                     params.set("action", "search")
-                                    params.set("cfgFilePath", encodeURIComponent(cfgFilePath))
+                                    params.set("projectDir", encodeURIComponent(prop.project_dir))
                                     params.set("search", encodeURIComponent(searchName))
                                     CallCfgAudioAction(params).then(value => {
                                         const resp : Resp = JSON.parse(value)
@@ -136,7 +138,7 @@ function AudioCfg() {
                             let params = new Map<string, string>()
                             params.set("type", "rp_interact")
                             params.set("action", "convert_rp_cfg")
-                            params.set("cfgFilePath", encodeURIComponent(cfgFilePath))
+                            params.set("projectDir", encodeURIComponent(prop.project_dir))
                             CallCfgAudioAction(params).then(value => {
                                 const resp : Resp = JSON.parse(value)
                                 console.log(resp.result)
@@ -155,45 +157,17 @@ function AudioCfg() {
                     ></Snackbar>
                 </Container>
                 <Paper>
-                    <SearchedAttrs attrs={searchAttrs} cfgPath={cfgFilePath} setParam={setSoundParam}/>
+                    <SearchedAttrs attrs={searchAttrs} projectDir={prop.project_dir} setParam={setSoundParam}/>
                 </Paper>
             </Grid>
         </div>
     )
 }
 
-export function RPInteractAudioCfgPage() {
+export function RPInteractAudioCfgPage(prop: CfgProps) {
     return (
-        <Box
-            component="main"
-            sx={{
-                backgroundColor: (theme) =>
-                    theme.palette.mode === 'light'
-                        ? theme.palette.grey[100]
-                        : theme.palette.grey[900],
-                flexGrow: 1,
-                height: '100vh',
-                overflow: 'auto',
-            }}
-        >
-            <Toolbar />
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Grid container spacing={3}>
-                    {/* Chart */}
-                    <Grid item xs={12}>
-                        <Paper
-                            sx={{
-                                p: 2,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                // height: 240,
-                            }}
-                        >
-                            <AudioCfg />
-                        </Paper>
-                    </Grid>
-                </Grid>
-            </Container>
-        </Box>
+        <Grid item xs={12}>
+            <AudioCfg project_dir={prop.project_dir}/>
+        </Grid>
     )
 }

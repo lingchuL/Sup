@@ -1,11 +1,15 @@
+import os
 import json
 
 from urllib.parse import unquote
 
 from abc import ABC, abstractmethod
 
+from subprocess import Popen, PIPE
+
 from flask import Response, Request
 
+from block_cfg.settings import Settings
 from log_handle import SupLogger
 
 
@@ -14,6 +18,8 @@ class RequestReceiver(object):
 		self.request_args = in_request_args
 		self.arg_name_list = []
 		self.arg_dict = {}
+
+		self.settings = Settings()
 
 		self.init_arg_name_list()
 		self.init_arg_dict()
@@ -56,3 +62,16 @@ class RequestReceiver(object):
 	@staticmethod
 	def unquote_arg(in_encoded_arg_value):
 		return unquote(in_encoded_arg_value, encoding='utf-8')
+
+	@staticmethod
+	def call_convert_cfg_bat(in_bat_path):
+		# 输入回车跳过 pause
+		p = Popen(rf"{in_bat_path}", shell=True, stdin=PIPE)
+		p.stdin.write(b"\r\n")
+		p.stdin.close()
+		p.wait()
+		ret_code = p.returncode
+		print(ret_code)
+
+		return ret_code
+

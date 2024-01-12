@@ -219,6 +219,20 @@ class XlsxHandler(object):
 
 		SupLogger.info("excel saved")
 
+	def delete_win32com(self, row_num):
+		pythoncom.CoInitialize()
+		xlsx_app = Dispatch("Excel.Application")
+		xlsx_app.Visible = False
+		xlsx_wb = xlsx_app.Workbooks.Open(self.file_path)
+
+		xlsx_wb.Worksheets(self.sheet_index_win32com).Rows(row_num).Delete()
+
+		xlsx_wb.Save()
+		xlsx_wb.Close()
+		xlsx_app.Quit()
+
+		SupLogger.info(f"Deleted row: {row_num}")
+
 
 if __name__ == "__main__":
 	xlsx_handler = XlsxHandler()

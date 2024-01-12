@@ -99,7 +99,7 @@ class CfgHandler(object):
 
 		return first_match_attr_name
 
-	def set_row_dict(self, in_main_key_value: str, in_row: dict):
+	def set_row_dict_or_add(self, in_main_key_value: str, in_row: dict):
 		if in_main_key_value not in self.rows:
 			last_row_num = list(self.row_nums.keys())[-1]
 			self.row_nums[in_main_key_value] = self.row_nums[last_row_num] + 1
@@ -115,3 +115,11 @@ class CfgHandler(object):
 		row_num = self.row_nums[in_main_key_value]
 		col = self.xlsx_handler.get_attr_col_by_name(attr_name)
 		self.xlsx_handler.write_save_cell(col, row_num, self.search_row_by_id(in_main_key_value)[attr_name])
+
+	def delete_id(self, in_main_key_value):
+		if in_main_key_value not in self.row_nums:
+			return
+		row_num = self.row_nums[in_main_key_value]
+		self.xlsx_handler.delete_win32com(row_num)
+		self.row_nums.pop(in_main_key_value)
+		self.rows.pop(in_main_key_value)
