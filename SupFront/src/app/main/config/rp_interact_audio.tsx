@@ -53,24 +53,22 @@ function SearchedAttrs({attrs, projectDir, setParam}: AttrArray) {
                     }}>
                     </TextField>
                     <Divider key={crypto.randomUUID()}/>
-                    {showSave && (
-                        <IconButton key={crypto.randomUUID()}
-                                    onClick={()=> {
-                                        let params = new Map<string, string>()
-                                        params.set("type", "rp_interact")
-                                        params.set("action", "write_save_id")
-                                        params.set("projectDir", encodeURIComponent(projectDir))
-                                        params.set("search", encodeURIComponent(attr.id_))
-                                        params.set("sfx_start", attr.sfx_start)
-                                        params.set("sfx_end", attr.sfx_end)
-                                        CallCfgAudioAction(params).then((value)=>{
-                                            console.log(value)
-                                            setShowInfo(true)
-                                        })
-                                    }}>
-                            <SaveIcon />
-                        </IconButton>
-                    )}
+                    <IconButton key={crypto.randomUUID()}
+                                onClick={()=> {
+                                    let params = new Map<string, string>()
+                                    params.set("type", "rp_interact")
+                                    params.set("action", "write_save_id")
+                                    params.set("projectDir", encodeURIComponent(projectDir))
+                                    params.set("search", encodeURIComponent(attr.id_))
+                                    params.set("sfx_start", attr.sfx_start)
+                                    params.set("sfx_end", attr.sfx_end)
+                                    CallCfgAudioAction(params).then((value)=>{
+                                        console.log(value)
+                                        setShowInfo(true)
+                                    })
+                                }}>
+                        <SaveIcon />
+                    </IconButton>
                     <Snackbar
                         open={showInfo}
                         autoHideDuration={5000}
