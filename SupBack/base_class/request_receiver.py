@@ -1,15 +1,14 @@
-import os
 import json
 
 from urllib.parse import unquote
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from subprocess import Popen, PIPE
 
 from flask import Response, Request
 
-from block_cfg.settings import Settings
+from settings.block_cfg_setting import BlockCfgSettings
 from log_handle import SupLogger
 
 
@@ -19,7 +18,7 @@ class RequestReceiver(object):
 		self.arg_name_list = []
 		self.arg_dict = {}
 
-		self.settings = Settings()
+		self.settings = BlockCfgSettings()
 
 		self.init_arg_name_list()
 		self.init_arg_dict()

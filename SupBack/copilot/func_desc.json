@@ -1,0 +1,7 @@
+{
+  "talk": "just continue talking, no special function should be called",
+  "end": "stop or end talking, no special function should be called",
+  "bpm": "bpm related function, get beat seconds from bpm, or get bpm from given beat seconds",
+  "get_note_freq": "get frequency of a given note, e.g. C4 -> 261.63 Hz",
+  "get_freq_note": "get note of a frequency, e.g. 261.63 Hz -> C4"
+}

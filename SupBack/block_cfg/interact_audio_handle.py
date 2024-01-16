@@ -1,6 +1,6 @@
 import re
 
-from base_class.cfg_handler import CfgHandler
+from base_class.cfg_handle import CfgHandler
 
 
 class InteractAudioCfgHandler(CfgHandler):

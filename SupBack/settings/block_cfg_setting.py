@@ -1,4 +1,4 @@
-class Settings(object):
+class BlockCfgSettings(object):
 	def __init__(self):
 		self.voxel_relative_path = r"Client\Data\JungoTownRP\1_体素配置_RP.xlsx"
 		self.item_relative_path = r"Client\Data\JungoTownRP\3_物品配置_RP.xlsx"
