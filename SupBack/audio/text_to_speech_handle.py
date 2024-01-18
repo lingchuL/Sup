@@ -5,7 +5,13 @@ import subprocess
 import base64
 import json
 import uuid
+from typing import Literal
+
 import requests
+
+from openai import OpenAI
+
+from settings.copilot_setting import CopilotSetting
 
 
 class TextToSpeechHandler(object):
@@ -82,7 +88,32 @@ class BytedanceTTS(TextToSpeechHandler):
 			print(e)
 
 
+class OpenAITTS(TextToSpeechHandler):
+	def __init__(self):
+		super().__init__()
+		self.voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"] = "nova"
+		self.model = "tts-1-hd"
+		self.setting = CopilotSetting()
+
+	def tts(self, in_text):
+		client = OpenAI(api_key=self.setting.one_api_key, base_url=self.setting.one_api_base_url)
+		response = client.audio.speech.create(
+			model=self.model,
+			voice=self.voice,
+			input=in_text,
+			speed=1,
+			response_format="flac"
+		)
+		response.stream_to_file("speech.flac")
+
+	def speak(self, in_text):
+		self.tts(in_text)
+		self.play_audio("speech.mp3")
+
+
 if __name__ == '__main__':
-	speaker = BytedanceTTS()
+	# speaker = BytedanceTTS()
+	speaker = OpenAITTS()
 	print(__file__)
-	speaker.speak("老大，早上好！")
+	# speaker.speak("老大，早上好！")
+	speaker.speak("Welcome to Jungo Museum! This museum houses a wide variety of exhibits, including our dinosaur gallery, which features life-sized models of these ancient creatures. We also have exhibits on natural history, art, and culture. Take your time to explore and learn something new at every turn. Thank you for visiting!")

@@ -59,6 +59,7 @@ class EntityCfgHandler(CfgHandler):
 		ability_name = f"_{in_ability_name}"
 		attr_name = self.get_first_match_attr_name(in_pk, ability_name)
 		attr_dict[attr_name] = ""
+		print(attr_dict)
 
 		self.set_row_dict_or_add(in_pk, attr_dict)
 

@@ -34,7 +34,7 @@ export default function MainItems() {
                 </ListItemIcon>
                 <ListItemText primary="Customers"/>
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={() => router.push("/main/copilot")}>
                 <ListItemIcon>
                     <BarChartIcon/>
                 </ListItemIcon>

@@ -1,10 +1,10 @@
 import json
 import requests
 
-from llm_handle import ChatGPT
-from speak_handle import Speaker
+from copilot.llm_handle import ChatGPT
+from copilot.speak_handle import Speaker
 
-from func_handle import FuncHandler
+from copilot.func_handle import FuncHandler
 
 from settings.copilot_setting import CopilotSetting
 
@@ -37,7 +37,9 @@ class Copilot(object):
 
 	def chat(self, in_new_message: str):
 		func_name = self.get_func(in_new_message)
-		self.get_func_param(func_name, in_new_message)
+		func_params_dict_str = self.get_func_param(func_name, in_new_message)
+		response_str = self.call_func_url(func_name, json.loads(func_params_dict_str))
+		return json.loads(response_str)["note"]
 
 	def get_func(self, in_message):
 		chat_dict_history = []
@@ -71,7 +73,7 @@ class Copilot(object):
 
 		response = self.llm.chat(msg_list_llm)
 		print(response)
-		self.call_func_url(func_name, json.loads(response))
+		return response
 
 	def call_func_url(self, func_name, in_param_dict):
 		func_url = self.func_handler.get_func_url(func_name)
@@ -84,11 +86,12 @@ class Copilot(object):
 
 		response = requests.get(url)
 		print(response.text)
+		return response.text
 
 
 if __name__ == "__main__":
 	copilot = Copilot()
-	copilot.chat("乐音C5对应的频率是多少？")
+	# copilot.chat("乐音C5对应的频率是多少？")
 	copilot.chat("频率880Hz附近的乐音是什么？")
 	# copilot.chat("What is the capital of France?")
 	# copilot.chat("下次再见会是什么时候？")

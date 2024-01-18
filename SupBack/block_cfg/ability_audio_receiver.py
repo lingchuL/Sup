@@ -153,8 +153,9 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 		# print(f"Entity配置 {entity_handler.search_row_by_id(entity_pk)}")
 		entity_handler.write_save_id(entity_pk)
 
-		result_list = ability_cfg_handler.search_row_list(ability_pk[:-2])
-		return self.form_result_dict(result_list, "0")
+		# result_list = ability_cfg_handler.search_row_list(ability_pk[:-2])
+		# return self.form_result_dict(result_list, "0")
+		return self.form_result_dict("Finished", "0")
 
 	def convert_cfg(self):
 		project_dir = self.unquote_arg(self.arg_dict["projectDir"])

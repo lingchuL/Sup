@@ -12,6 +12,8 @@ from audio.bpm_handle import BPMHandler
 from block_cfg.interact_audio_receiver import InteractAudioReceiver
 from block_cfg.ability_audio_receiver import AbilityAudioCfgReceiver
 
+from copilot.copilot_handle import Copilot
+
 app = Flask(__name__)
 CORS(app)
 
@@ -185,3 +187,17 @@ def interact_audio_handle():
 	elif type_name == "ability":
 		receiver = AbilityAudioCfgReceiver(request.args)
 	return receiver.handle_action()
+
+
+@app.route('/copilot', methods=["GET"])
+def copilot_handle():
+	print(request.args)
+	message_encoded = request.args.get("message")
+	message = unquote(message_encoded)
+
+	copilot = Copilot()
+	result = copilot.chat(message)
+
+	resp = Response(json.dumps({"result": result, "status": "0"}))
+	resp.headers['Access-Control-Allow-Origin'] = '*'
+	return resp

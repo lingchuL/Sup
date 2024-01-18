@@ -14,10 +14,6 @@ export interface AttrProperty {
     is_editable: boolean
 }
 
-export interface RowAttr {
-
-}
-
 export interface Row {
     key: string,
     attr_names: string[],

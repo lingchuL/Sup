@@ -1,13 +1,15 @@
+import os
 import json
 
 
 class FuncHandler(object):
 	def __init__(self):
-		with open("func_desc.json", "r", encoding='utf-8') as f:
+		current_dir = os.path.dirname(os.path.abspath(__file__))
+		with open(os.path.join(current_dir, "func_desc.json"), "r", encoding='utf-8') as f:
 			self.func_desc_dict = json.load(f)
-		with open("func_params_desc.json", "r", encoding='utf-8') as f:
+		with open(os.path.join(current_dir, "func_params_desc.json"), "r", encoding='utf-8') as f:
 			self.func_param_desc_dict = json.load(f)
-		with open("func_url.json", "r", encoding='utf-8') as f:
+		with open(os.path.join(current_dir, "func_url.json"), "r", encoding='utf-8') as f:
 			self.func_url_dict = json.load(f)
 
 	def get_func_desc_str(self):
