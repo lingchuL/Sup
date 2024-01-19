@@ -17,17 +17,30 @@ class RequestReceiver(object):
 		self.request_args = in_request_args
 		self.arg_name_list = []
 		self.arg_dict = {}
+		self.action_func_dict = {}
 
 		self.settings = BlockCfgSettings()
 
 		self.init_arg_name_list()
 		self.init_arg_dict()
+		self.init_action_func_dict()
+
+		SupLogger.info(f"RequestReceiver 获得请求参数：{self.arg_dict}")
 
 	@abstractmethod
 	def init_arg_name_list(self):
 		"""
 		初始化Get请求的参数名列表self.arg_name_list
 		随后会根据请求自动填入self.arg_dict
+		:return:
+		"""
+		pass
+
+	@abstractmethod
+	def init_action_func_dict(self):
+		"""
+		初始化Get请求的参数名列表self.action_func_dict
+		将根据action值执行不同函数
 		:return:
 		"""
 		pass
@@ -39,17 +52,29 @@ class RequestReceiver(object):
 			else:
 				self.arg_dict[arg_name] = ""
 
-	@abstractmethod
 	def handle_action(self) -> Response:
 		"""
 		处理请求 通过self.arg_dict字典获取需要的请求参数
 		:return:
 		"""
-		pass
+		if "action" in self.arg_dict:
+			action = self.arg_dict["action"]
+		else:
+			SupLogger.info("handle_action action参数缺失")
+			return self.form_response(self.form_result_dict("action missing", "-1"))
+
+		if action not in self.action_func_dict:
+			SupLogger.info(f"handle_action action未定义: {action}")
+			return self.form_response(self.form_result_dict(f"action not defined {action}", "-1"))
+
+		action_func = self.action_func_dict[action]
+		result_dict = action_func()
+
+		return self.form_response(result_dict)
 
 	@staticmethod
-	def form_result_dict(result, status):
-		SupLogger.info(f"处理返回结果: result={result}, status_code={status}")
+	def form_result_dict(result, status="0"):
+		SupLogger.info(f"RequestReceiver 处理返回结果: result={result}, status_code={status}")
 		return {"result": result, "status_code": status}
 
 	@staticmethod
@@ -61,16 +86,3 @@ class RequestReceiver(object):
 	@staticmethod
 	def unquote_arg(in_encoded_arg_value):
 		return unquote(in_encoded_arg_value, encoding='utf-8')
-
-	@staticmethod
-	def call_convert_cfg_bat(in_bat_path):
-		# 输入回车跳过 pause
-		p = Popen(rf"{in_bat_path}", shell=True, stdin=PIPE)
-		p.stdin.write(b"\r\n")
-		p.stdin.close()
-		p.wait()
-		ret_code = p.returncode
-		print(ret_code)
-
-		return ret_code
-

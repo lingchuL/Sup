@@ -1,35 +1,21 @@
 'use client'
 import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
-import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AlertDialog from "@/app/main/AlertDialog";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import {Get_Json, TransBPMSPB, TransNoteFreq} from "@/app/api/route";
-import {Dialog, TextField} from "@mui/material";
-import FileSizeList from "@/app/main/file_size_list";
+import {CallAudioAction} from "@/app/api/route";
+import {TextField} from "@mui/material";
 import {useState} from "react";
 
-interface NoteFreq {
-    note: string;
-    freq: string
-}
-interface BPMSPB {
-    bpm: string;
-    spb: string
+
+interface Resp {
+    result: string,
+    status: string,
 }
 
 function Copyright(props: any) {
@@ -93,13 +79,18 @@ export default function Dashboard() {
                                 <Button
                                     variant="outlined"
                                     onClick={()=> {
-                                        TransNoteFreq(note, freq).then(value => {
+                                        let params = new Map<string, string>()
+                                        let action = note == "" ? "freq_to_note": "note_to_freq"
+                                        params.set("action", action)
+                                        params.set("note", note)
+                                        params.set("freq", freq)
+                                        CallAudioAction(params).then(value => {
                                             const text = value
                                             console.log(text)
-                                            const note_freq: NoteFreq = JSON.parse(text);
-                                            console.log(note_freq)
-                                            setNote(note_freq.note)
-                                            setFreq(note_freq.freq)
+                                            const resp: Resp = JSON.parse(text);
+                                            console.log(resp)
+                                            if (action == "note_to_freq") setFreq(resp.result)
+                                            else setNote(resp.result)
                                         })
                                     }}>
                                     Freq
@@ -131,13 +122,18 @@ export default function Dashboard() {
                                 <Button
                                     variant="outlined"
                                     onClick={()=> {
-                                        TransBPMSPB(bpm, spb).then(value => {
+                                        let params = new Map<string, string>()
+                                        let action = bpm == "" ? "spb_to_bpm": "bpm_to_spb"
+                                        params.set("action", action)
+                                        params.set("bpm", bpm)
+                                        params.set("spb", spb)
+                                        CallAudioAction(params).then(value => {
                                             const text = value
                                             console.log(text)
-                                            const bpm_trans: BPMSPB = JSON.parse(text);
-                                            console.log(bpm_trans)
-                                            setBPM(bpm_trans.bpm)
-                                            setSPB(bpm_trans.spb)
+                                            const resp: Resp = JSON.parse(text);
+                                            console.log(resp)
+                                            if (action == "spb_to_bpm") setBPM(resp.result)
+                                            else setSPB(resp.result)
                                         })
                                     }}>
                                     BPM

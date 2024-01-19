@@ -237,7 +237,7 @@ class XlsxHandler(object):
 if __name__ == "__main__":
 	xlsx_handler = XlsxHandler()
 	xlsx_handler.load(r"E:\Workflow\Block-wangjunyi.42-trunk\Client\Data\JungoTownRP\1_体素配置_RP.xlsx")
-	xlsx_handler.add_attr_name_range(["C", "E"], "3")
+	xlsx_handler.add_attr_name_range(["C", "E"], 3)
 	print(xlsx_handler.attr_names)
 	column_handler = ColumnNumHandler()
 	# print(column_handler.num_of_col("AZ"))

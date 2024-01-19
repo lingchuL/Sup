@@ -6,7 +6,7 @@ from pprint import pprint
 from win32com.shell import shell, shellcon
 
 
-class DirHandler(object):
+class DirFileHandler(object):
 	def __init__(self):
 		self.dir_path = ""
 

@@ -1,10 +1,14 @@
 {
-  "get_note_freq": {
-    "note": "specific a note name, e.g. C4",
-    "freq": "always leave this empty, it will be filled in automatically"
+  "bpm_to_spb": {
+    "bpm": "specific bpm float number, e.g. 120.0"
   },
-  "get_freq_note": {
-    "frequency": "specific frequency float number, e.g. 261.63",
-    "note": "always leave this empty, it will be filled in automatically"
+  "spb_to_bpm": {
+    "spb": "specific spb float number, e.g. 4.0"
+  },
+  "note_to_freq": {
+    "note": "specific a note name, e.g. C4"
+  },
+  "freq_to_note": {
+    "frequency": "specific frequency float number, e.g. 261.63"
   }
 }

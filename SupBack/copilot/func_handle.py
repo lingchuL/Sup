@@ -29,4 +29,4 @@ class FuncHandler(object):
 		return result_str
 
 	def get_func_url(self, func_name):
-		return f"http://127.0.0.1:8133/{self.func_url_dict[func_name]}?"
+		return f"http://127.0.0.1:8133/{self.func_url_dict[func_name]}"

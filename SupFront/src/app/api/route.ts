@@ -29,49 +29,12 @@ export async function Get_Json(): Promise<string> {
     return data
 }
 
-export async function CallFileAction(params: Map<string, string>): Promise<string> {
+export async function ParamsGet(url_route: string, params: Map<string, string>): Promise<string> {
     let url_param = ""
     params.forEach(function(value, key) {
         url_param += "&" + key + "=" + value
     })
-    let call_file_url = encodeURI('http://127.0.0.1:8133/file?' + url_param)
-
-    console.log(call_file_url)
-    const res = await fetch(call_file_url, {
-        headers: {
-            "Content-Type": "text/json"
-        },
-        method: "GET",
-        cache: "no-cache",
-    })
-    // console.log(res)
-    const data_text = await res.text()
-    console.log(data_text)
-
-    return data_text
-}
-
-export async function TransNoteFreq(note: string, freq: string): Promise<string> {
-    let note_param = encodeURIComponent(note)
-    let note_freq_url = encodeURI('http://127.0.0.1:8133/note?note=' + note_param + "&freq=" + freq)
-    console.log(note_freq_url)
-    const res = await fetch(note_freq_url, {
-        headers: {
-            "Content-Type": "text/json"
-        },
-        method: "GET",
-        cache: "no-cache",
-    })
-    // console.log(res)
-    const data_text = await res.text()
-    console.log(data_text)
-
-    return data_text
-}
-
-export async function TransBPMSPB(bpm: string, spb: string): Promise<string> {
-    let bpm_param = encodeURIComponent(bpm)
-    let bpm_spb_url = encodeURI('http://127.0.0.1:8133/bpm?bpm=' + bpm_param + "&spb=" + spb)
+    let bpm_spb_url = encodeURI('http://127.0.0.1:8133/'+ url_route + '?' + url_param.substring(1))
     console.log(bpm_spb_url)
     const res = await fetch(bpm_spb_url, {
         headers: {
@@ -87,46 +50,18 @@ export async function TransBPMSPB(bpm: string, spb: string): Promise<string> {
     return data_text
 }
 
+export async function CallFileAction(params: Map<string, string>): Promise<string> {
+    return await ParamsGet("dir_file", params)
+}
+
+export async function CallAudioAction(params: Map<string, string>): Promise<string> {
+    return await ParamsGet("audio", params)
+}
+
 export async function CallCfgAudioAction(params: Map<string, string>): Promise<string> {
-    let url_param = ""
-    params.forEach(function(value, key) {
-        url_param += "&" + key + "=" + value
-    })
-    let cfg_audio_url = encodeURI('http://127.0.0.1:8133/cfg?' + url_param)
-
-    console.log(cfg_audio_url)
-    const res = await fetch(cfg_audio_url, {
-        headers: {
-            "Content-Type": "text/json"
-        },
-        method: "GET",
-        cache: "no-cache",
-    })
-    // console.log(res)
-    const data_text = await res.text()
-    console.log(data_text)
-
-    return data_text
+    return await ParamsGet("cfg", params)
 }
 
 export async function CallCopilotAction(params: Map<string, string>): Promise<string> {
-    let url_param = ""
-    params.forEach(function(value, key) {
-        url_param += "&" + key + "=" + value
-    })
-    let copilot_url = encodeURI('http://127.0.0.1:8133/copilot?' + url_param)
-
-    console.log(copilot_url)
-    const res = await fetch(copilot_url, {
-        headers: {
-            "Content-Type": "text/json"
-        },
-        method: "GET",
-        cache: "no-cache",
-    })
-    // console.log(res)
-    const data_text = await res.text()
-    console.log(data_text)
-
-    return data_text
+    return await ParamsGet("copilot", params)
 }

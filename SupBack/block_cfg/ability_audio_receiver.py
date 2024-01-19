@@ -1,5 +1,7 @@
 import os.path
 
+from subprocess import Popen, PIPE
+
 from base_class.request_receiver import RequestReceiver
 from block_cfg.ability_audio_handle import ItemCfgHandler, EntityCfgHandler, AbilityAudioCfgHandler
 
@@ -16,20 +18,14 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 			"castSfxTime"
 		]
 
-	def handle_action(self):
-		result_dict = {}
-		if self.arg_dict["action"] == "search_item":
-			result_dict = self.search_item()
-		elif self.arg_dict["action"] == "search_ability":
-			result_dict = self.search_ability()
-		elif self.arg_dict["action"] == "write_save_ability":
-			result_dict = self.write_save_ability()
-		elif self.arg_dict["action"] == "convert_cfg":
-			result_dict = self.convert_cfg()
-		elif self.arg_dict["action"] == "delete_ability":
-			result_dict = self.delete_ability()
-
-		return self.form_response(result_dict)
+	def init_action_func_dict(self):
+		self.action_func_dict = {
+			"search_item": self.search_item,
+			"search_ability": self.search_ability,
+			"write_save_ability": self.write_save_ability,
+			"convert_cfg": self.convert_cfg,
+			"delete_ability": self.delete_ability
+		}
 
 	def search_item(self):
 		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
@@ -157,6 +153,18 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 		# return self.form_result_dict(result_list, "0")
 		return self.form_result_dict("Finished", "0")
 
+	@staticmethod
+	def call_bat(in_bat_path):
+		# 输入回车跳过 pause
+		p = Popen(rf"{in_bat_path}", shell=True, stdin=PIPE)
+		p.stdin.write(b"\r\n")
+		p.stdin.close()
+		p.wait()
+		ret_code = p.returncode
+		print(ret_code)
+
+		return ret_code
+
 	def convert_cfg(self):
 		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
 		rp_bat_path = os.path.join(project_dir, self.settings.convert_rp_cfg_relative_path)
@@ -164,8 +172,8 @@ class AbilityAudioCfgReceiver(RequestReceiver):
 
 		print(rp_bat_path)
 
-		rp_ret_code = self.call_convert_cfg_bat(rp_bat_path)
-		ability_ret_code = self.call_convert_cfg_bat(ability_bat_path)
+		rp_ret_code = self.call_bat(rp_bat_path)
+		ability_ret_code = self.call_bat(ability_bat_path)
 
 		if rp_ret_code == 0 and ability_ret_code == "0":
 			status_code = "0"

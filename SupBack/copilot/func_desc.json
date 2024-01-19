@@ -2,6 +2,8 @@
   "talk": "just continue talking, no special function should be called",
   "end": "stop or end talking, no special function should be called",
   "bpm": "bpm related function, get beat seconds from bpm, or get bpm from given beat seconds",
-  "get_note_freq": "get frequency of a given note, e.g. C4 -> 261.63 Hz",
-  "get_freq_note": "get note of a frequency, e.g. 261.63 Hz -> C4"
+  "note_to_freq": "get frequency of a given note, e.g. C4 -> 261.63 Hz",
+  "freq_to_note": "get note of a frequency, e.g. 261.63 Hz -> C4",
+  "bpm_to_spb": "get second per beat of a give bpm, e.g. 60 -> 1.0",
+  "spb_to_bpm": "get bpm of a given second per beat, e.g. 1.0 -> 60"
 }

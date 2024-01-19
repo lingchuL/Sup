@@ -1,11 +1,6 @@
-import json
 import os.path
 
 from subprocess import Popen, PIPE
-
-from urllib.parse import unquote
-
-from flask import Response, Request
 
 from base_class.request_receiver import RequestReceiver
 
@@ -23,18 +18,12 @@ class InteractAudioReceiver(RequestReceiver):
 			"sfx_end",
 		]
 
-	def handle_action(self):
-		result_dict = {}
-		if self.arg_dict["action"] == "search":
-			result_dict = self.search()
-		elif self.arg_dict["action"] == "write_save_id":
-			result_dict = self.write_save_id()
-		elif self.arg_dict["action"] == "convert_rp_cfg":
-			result_dict = self.convert_rp_cfg()
-
-		resp = Response(json.dumps(result_dict))
-		resp.headers['Access-Control-Allow-Origin'] = '*'
-		return resp
+	def init_action_func_dict(self):
+		self.action_func_dict = {
+			"search": self.search,
+			"write_save_id": self.write_save_id,
+			"convert_rp_cfg": self.convert_rp_cfg
+		}
 
 	def search(self):
 		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
@@ -81,19 +70,25 @@ class InteractAudioReceiver(RequestReceiver):
 
 		return self.form_result_dict("Finished", status_code)
 
+	@staticmethod
+	def call_bat(in_bat_path):
+		# 输入回车跳过 pause
+		p = Popen(rf"{in_bat_path}", shell=True, stdin=PIPE)
+		p.stdin.write(b"\r\n")
+		p.stdin.close()
+		p.wait()
+		ret_code = p.returncode
+		print(ret_code)
+
+		return ret_code
+
 	def convert_rp_cfg(self):
 		project_dir = self.unquote_arg(self.arg_dict["projectDir"])
 		convert_rp_bat_path = os.path.join(project_dir, self.settings.convert_rp_cfg_relative_path)
 
 		print(convert_rp_bat_path)
 
-		# 输入回车跳过 pause
-		p = Popen(rf"{convert_rp_bat_path}", shell=True, stdin=PIPE)
-		p.stdin.write(b"\r\n")
-		p.stdin.close()
-		p.wait()
-		ret_code = p.returncode
-		print(ret_code)
+		ret_code = self.call_bat(convert_rp_bat_path)
 		if ret_code == 0:
 			status_code = "0"
 		else:

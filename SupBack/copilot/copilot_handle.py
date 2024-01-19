@@ -35,13 +35,22 @@ class Copilot(object):
 			chat_history += f"{role}: {content}\n"
 		return chat_history
 
-	def chat(self, in_new_message: str):
-		func_name = self.get_func(in_new_message)
-		func_params_dict_str = self.get_func_param(func_name, in_new_message)
-		response_str = self.call_func_url(func_name, json.loads(func_params_dict_str))
-		return json.loads(response_str)["note"]
+	def chat(self, message: str):
+		func_name = self.get_func_name(message)
+		print(f"Copilot 使用函数: {func_name}")
+		if func_name == "":
+			return ""
+		func_params_dict = self.get_func_param_dict(func_name, message)
+		print(f"Copilot 参数: {func_params_dict}")
+		if func_params_dict == {}:
+			return ""
 
-	def get_func(self, in_message):
+		response_str = self.call_func_url(func_name, func_params_dict)
+		print(f"Copilot 结果: {response_str}")
+
+		return json.loads(response_str)["result"]
+
+	def get_func_name(self, in_message):
 		chat_dict_history = []
 		msg_list_llm = []
 
@@ -54,10 +63,9 @@ class Copilot(object):
 		msg_list_llm.append({"role": "user", "content": chat_history})
 
 		response = self.llm.chat(msg_list_llm)
-		print(response)
 		return json.loads(response)["function_name"]
 
-	def get_func_param(self, func_name, in_message):
+	def get_func_param_dict(self, func_name, in_message):
 		chat_dict_history = []
 		msg_list_llm = []
 
@@ -72,17 +80,20 @@ class Copilot(object):
 		msg_list_llm.append({"role": "user", "content": chat_history})
 
 		response = self.llm.chat(msg_list_llm)
-		print(response)
-		return response
+		res_dict = json.loads(response)
+		return res_dict if res_dict else {}
 
 	def call_func_url(self, func_name, in_param_dict):
 		func_url = self.func_handler.get_func_url(func_name)
+
 		param_str = ""
 		for param_name, param_value in in_param_dict.items():
 			param_str += f"{param_name}={param_value}&"
 		param_str = param_str[:-1]
 
 		url = f"{func_url}{param_str}"
+
+		print(f"Copilot 跳转执行: {url}")
 
 		response = requests.get(url)
 		print(response.text)

@@ -29,6 +29,7 @@ export default function CopilotPage() {
                 <Button variant="outlined"
                         onClick={() => {
                             let params = new Map<string, string>()
+                            params.set("action", "handle_message")
                             params.set("message", encodeURIComponent(message))
                             CallCopilotAction(params).then(value => {
                                 const resp: Resp = JSON.parse(value)

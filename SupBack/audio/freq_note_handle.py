@@ -1,7 +1,7 @@
 import math
 
 
-class FreqNoteTrans(object):
+class FreqNoteHandler(object):
 	def __init__(self):
 		notes_sharp = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 		notes_flat = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
@@ -59,7 +59,7 @@ class FreqNoteTrans(object):
 		print(f"FreqNoteTrans get_index_note 音高索引{in_index}未找到对应音名")
 		return ""
 
-	def get_near_note(self, in_freq: float):
+	def get_freq_near_note(self, in_freq: float):
 		freq_times = in_freq / self.standard_freq
 		note_interval = round(math.log(freq_times, math.pow(2, 1 / 12)))
 
@@ -89,7 +89,7 @@ class FreqNoteTrans(object):
 
 
 if __name__ == "__main__":
-	freq_note_trans = FreqNoteTrans()
+	freq_note_trans = FreqNoteHandler()
 	freq_note_trans.get_note_freq("A4")
-	freq_note_trans.get_near_note(784)
+	freq_note_trans.get_freq_near_note(784)
 
