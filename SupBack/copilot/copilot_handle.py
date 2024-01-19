@@ -5,6 +5,7 @@ from copilot.llm_handle import ChatGPT
 from copilot.speak_handle import Speaker
 
 from copilot.func_handle import FuncHandler
+from copilot.decision_handle import DecisionHandler
 
 from settings.copilot_setting import CopilotSetting
 
@@ -14,90 +15,16 @@ class Copilot(object):
 		self.setting = in_setting
 
 		self.llm = ChatGPT(in_setting)
-		self.llm_func_param = ChatGPT(in_setting)
-
-		self.speaker = Speaker()
 
 		self.func_handler = FuncHandler()
 
-		self.chat_dict_history = []
-		self.chat_history = ""
-
-		self.msg_list_llm = []
-
-	@staticmethod
-	def add_into_history(in_role: str, in_message: str, out_chat_dict_history: [dict]):
-		out_chat_dict_history.append({"role": in_role, "content": in_message})
-		chat_history = ""
-		for chat in out_chat_dict_history:
-			role = chat["role"]
-			content = chat["content"]
-			chat_history += f"{role}: {content}\n"
-		return chat_history
-
 	def chat(self, message: str):
-		func_name = self.get_func_name(message)
-		print(f"Copilot 使用函数: {func_name}")
-		if func_name == "":
-			return ""
-		func_params_dict = self.get_func_param_dict(func_name, message)
-		print(f"Copilot 参数: {func_params_dict}")
-		if func_params_dict == {}:
-			return ""
+		func_params_dict = self.func_handler.get_func_and_params_dict(message)
+		response_str = self.func_handler.call_func(func_params_dict)
 
-		response_str = self.call_func_url(func_name, func_params_dict)
-		print(f"Copilot 结果: {response_str}")
+		print(f"Copilot response_str: {response_str}")
 
 		return json.loads(response_str)["result"]
-
-	def get_func_name(self, in_message):
-		chat_dict_history = []
-		msg_list_llm = []
-
-		start_prompt = str.format(self.setting.start_prompt_template, func_desc_str=self.func_handler.get_func_desc_str())
-		start_prompt += "\n" + self.setting.start_example
-		self.add_into_history("system", start_prompt, chat_dict_history)
-		msg_list_llm.append({"role": "system", "content": start_prompt})
-
-		chat_history = self.add_into_history("user", in_message, chat_dict_history)
-		msg_list_llm.append({"role": "user", "content": chat_history})
-
-		response = self.llm.chat(msg_list_llm)
-		return json.loads(response)["function_name"]
-
-	def get_func_param_dict(self, func_name, in_message):
-		chat_dict_history = []
-		msg_list_llm = []
-
-		get_func_params_prompt = str.format(self.setting.get_func_params_template,
-		                                    func_params_desc_str=self.func_handler.get_func_params_desc(func_name))
-		get_func_params_prompt += "\n" + self.setting.func_params_example
-
-		self.add_into_history("system", get_func_params_prompt, chat_dict_history)
-		msg_list_llm.append({"role": "system", "content": get_func_params_prompt})
-
-		chat_history = self.add_into_history("user", in_message, chat_dict_history)
-		msg_list_llm.append({"role": "user", "content": chat_history})
-
-		response = self.llm.chat(msg_list_llm)
-		res_dict = json.loads(response)
-		return res_dict if res_dict else {}
-
-	def call_func_url(self, func_name, in_param_dict):
-		func_url = self.func_handler.get_func_url(func_name)
-
-		param_str = ""
-		for param_name, param_value in in_param_dict.items():
-			param_str += f"{param_name}={param_value}&"
-		param_str = param_str[:-1]
-
-		url = f"{func_url}{param_str}"
-
-		print(f"Copilot 跳转执行: {url}")
-
-		response = requests.get(url)
-		print(response.text)
-		return response.text
 
 
 if __name__ == "__main__":

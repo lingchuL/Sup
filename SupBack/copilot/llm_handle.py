@@ -40,7 +40,7 @@ class ChatGPT(LLM):
 			return ""
 
 		token_num = len(self.encoding.encode(json.dumps(message_list)))
-		SupLogger.info(f"[ask] message_list: {message_list}，token_num: {token_num}")
+		# SupLogger.info(f"[ask] message_list: {message_list}，token_num: {token_num}")
 
 		response = self.client.chat.completions.create(
 			model=self.model,

@@ -1,14 +1,12 @@
 'use client'
 
-import Grid from "@mui/material/Grid";
-import Container from "@mui/material/Container";
-import {CircularProgress, IconButton, Snackbar, TextField} from "@mui/material";
+import {TextField} from "@mui/material";
 import {CallCopilotAction} from "@/app/api/route";
-import SearchIcon from "@mui/icons-material/Search";
 import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
 import * as React from "react";
 import Toolbar from "@mui/material/Toolbar";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 
 interface Resp {
     result: string,
@@ -20,12 +18,11 @@ export default function CopilotPage() {
     const [answer, setAnswer] = React.useState("");
 
     return (
-        <Grid container spacing={2}>
+        <Box width="100%">
             <Toolbar />
-            <Container maxWidth="lg">
+            <Box width="100%">
                 <TextField variant="outlined" value={message} onChange={(v) => setMessage(v.target.value)
-                }>
-                </TextField>
+                } fullWidth={true}/>
                 <Button variant="outlined"
                         onClick={() => {
                             let params = new Map<string, string>()
@@ -40,7 +37,7 @@ export default function CopilotPage() {
                     Send
                 </Button>
                 {answer}
-            </Container>
-        </Grid>
+            </Box>
+        </Box>
     )
 }
