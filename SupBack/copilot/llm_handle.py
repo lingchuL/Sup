@@ -34,7 +34,7 @@ class ChatGPT(LLM):
 
 		self.client = OpenAI(api_key=one_api_key, base_url=one_api_url)
 
-	def chat(self, message_list: list) -> str:
+	def talk(self, message_list: list) -> str:
 		if self.client is None:
 			SupLogger.info("openai client is None")
 			return ""
@@ -49,10 +49,14 @@ class ChatGPT(LLM):
 			messages=message_list
 		)
 		# print(response)
-		# print(response.choices[0])
+		print(response.choices[0])
 		return response.choices[0].message.content
+
+	def simple_chat(self, in_system_prompt, in_user_prompt):
+		conversation = [{"role": "system", "content": in_system_prompt}, {"role": "user", "content": in_user_prompt}]
+		return self.talk(conversation)
 
 
 if __name__ == "__main__":
 	llm = ChatGPT()
-	llm.chat([{"role": "user", "content": "What is the capital of France?"}])
+	llm.talk([{"role": "user", "content": "What is the capital of France?"}])

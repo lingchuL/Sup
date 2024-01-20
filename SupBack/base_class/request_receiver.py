@@ -13,8 +13,9 @@ from log_handle import SupLogger
 
 
 class RequestReceiver(object):
-	def __init__(self, in_request_args: Request.args):
-		self.request_args = in_request_args
+	def __init__(self, in_request: Request):
+		self.request = in_request
+		self.request_args = in_request.args
 		self.arg_name_list = []
 		self.arg_dict = {}
 		self.action_func_dict = {}
@@ -45,12 +46,18 @@ class RequestReceiver(object):
 		"""
 		pass
 
-	def init_arg_dict(self):
-		for arg_name in self.arg_name_list:
-			if arg_name in self.request_args:
-				self.arg_dict[arg_name] = self.request_args[arg_name]
+	@staticmethod
+	def load_arg_from_dict(arg_name_list, arg_value_dict):
+		arg_dict = {}
+		for arg_name in arg_name_list:
+			if arg_name in arg_value_dict:
+				arg_dict[arg_name] = arg_value_dict[arg_name]
 			else:
-				self.arg_dict[arg_name] = ""
+				arg_dict[arg_name] = ""
+		return arg_dict
+
+	def init_arg_dict(self):
+		self.arg_dict = self.load_arg_from_dict(self.arg_name_list, self.request_args)
 
 	def handle_action(self) -> Response:
 		"""

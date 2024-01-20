@@ -6,8 +6,8 @@ import {Dialog, TextField} from "@mui/material";
 import FileSizeList from "@/app/main/file_size_list";
 import {useEffect} from "react";
 
-interface Answer {
-    answer: string;
+interface Resp {
+    answer: string
 }
 
 export default function AlertDialog() {
@@ -30,11 +30,9 @@ export default function AlertDialog() {
                 variant="outlined"
                 onClick={()=> {
                     Get_Json().then(value => {
-                        const text = value
-                        console.log(text)
-                        const text_answer: Answer = JSON.parse(text);
-                        console.log(text_answer)
-                        setText(text_answer.answer)
+                        const resp: Resp = JSON.parse(value);
+                        console.log(resp.answer)
+                        setText(resp.answer)
                         handleClickOpen()
                     })
                 }}>

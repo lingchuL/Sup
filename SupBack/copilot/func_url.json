@@ -1,5 +1,6 @@
 {
-  "talk": "copilot?action=talk",
+  "talk": "copilot?action=talk&",
+  "end": "copilot?action=end&",
   "note_to_freq": "audio?action=note_to_freq&",
   "freq_to_note": "audio?action=freq_to_note&",
   "bpm_to_spb": "audio?action=bpm_to_spb&",

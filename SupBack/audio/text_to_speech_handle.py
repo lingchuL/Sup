@@ -14,9 +14,9 @@ from openai import OpenAI
 from settings.copilot_setting import CopilotSetting
 
 
-class TextToSpeechHandler(object):
-	def __init__(self):
-		pass
+class TTSHandler(object):
+	def __init__(self, in_setting=CopilotSetting()):
+		self.setting = in_setting
 
 	@staticmethod
 	def play_audio(file_path):
@@ -26,7 +26,7 @@ class TextToSpeechHandler(object):
 		subprocess.run(cmd, shell=False)
 
 
-class BytedanceTTS(TextToSpeechHandler):
+class BytedanceTTS(TTSHandler):
 	def __init__(self):
 		super(BytedanceTTS, self).__init__()
 
@@ -88,12 +88,11 @@ class BytedanceTTS(TextToSpeechHandler):
 			print(e)
 
 
-class OpenAITTS(TextToSpeechHandler):
-	def __init__(self):
-		super().__init__()
+class OpenAITTS(TTSHandler):
+	def __init__(self, in_setting=CopilotSetting()):
+		super().__init__(in_setting)
 		self.voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"] = "nova"
 		self.model = "tts-1-hd"
-		self.setting = CopilotSetting()
 
 	def tts(self, in_text):
 		client = OpenAI(api_key=self.setting.one_api_key, base_url=self.setting.one_api_base_url)
@@ -108,7 +107,7 @@ class OpenAITTS(TextToSpeechHandler):
 
 	def speak(self, in_text):
 		self.tts(in_text)
-		self.play_audio("speech.mp3")
+		self.play_audio("speech.flac")
 
 
 if __name__ == '__main__':

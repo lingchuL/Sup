@@ -14,7 +14,8 @@ from audio.audio_receiver import AudioReceiver
 from block_cfg.interact_audio_receiver import InteractAudioReceiver
 from block_cfg.ability_audio_receiver import AbilityAudioCfgReceiver
 
-from copilot.copilot_handle import Copilot
+from copilot.copilot_handle import sup_copilot
+from copilot.copilot_receiver import CopilotReceiver
 
 app = Flask(__name__)
 CORS(app)
@@ -46,13 +47,13 @@ def login():
 @app.route('/dir_file', methods=["GET"])
 def dir_file():
 	print(request.args)
-	receiver = DirFileReceiver(request.args)
+	receiver = DirFileReceiver(request)
 	return receiver.handle_action()
 
 
 @app.route('/audio', methods=["GET"])
 def audio():
-	receiver = AudioReceiver(request.args)
+	receiver = AudioReceiver(request)
 	return receiver.handle_action()
 
 
@@ -62,21 +63,16 @@ def interact_audio_handle():
 	type_name = request.args.get("type")
 	receiver = None
 	if type_name == "rp_interact":
-		receiver = InteractAudioReceiver(request.args)
+		receiver = InteractAudioReceiver(request)
 	elif type_name == "ability":
-		receiver = AbilityAudioCfgReceiver(request.args)
+		receiver = AbilityAudioCfgReceiver(request)
 	return receiver.handle_action()
 
 
 @app.route('/copilot', methods=["GET"])
 def copilot_handle():
 	print(request.args)
-	message_encoded = request.args.get("message")
-	message = unquote(message_encoded)
 
-	copilot = Copilot()
-	result = copilot.chat(message)
+	receiver = CopilotReceiver(request)
+	return receiver.handle_action()
 
-	resp = Response(json.dumps({"result": result, "status": "0"}))
-	resp.headers['Access-Control-Allow-Origin'] = '*'
-	return resp

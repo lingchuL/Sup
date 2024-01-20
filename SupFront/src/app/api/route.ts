@@ -34,9 +34,9 @@ export async function ParamsGet(url_route: string, params: Map<string, string>):
     params.forEach(function(value, key) {
         url_param += "&" + key + "=" + value
     })
-    let bpm_spb_url = encodeURI('http://127.0.0.1:8133/'+ url_route + '?' + url_param.substring(1))
-    console.log(bpm_spb_url)
-    const res = await fetch(bpm_spb_url, {
+    let url = encodeURI('http://127.0.0.1:8133/'+ url_route + '?' + url_param.substring(1))
+    console.log(url)
+    const res = await fetch(url, {
         headers: {
             "Content-Type": "text/json"
         },

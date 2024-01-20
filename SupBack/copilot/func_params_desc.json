@@ -1,14 +1,38 @@
 {
+  "talk": {
+    "text": {
+      "type": "string",
+      "desc": "always leave this empty"
+    }
+  },
+  "end": {
+    "text": {
+      "type": "string",
+      "desc": "always leave this empty"
+    }
+  },
   "bpm_to_spb": {
-    "bpm": "specific bpm float number, e.g. 120.0"
+    "bpm": {
+      "type": "float",
+      "desc": "specific bpm float number, e.g. 120.0"
+    }
   },
   "spb_to_bpm": {
-    "spb": "specific spb float number, e.g. 4.0"
+    "spb": {
+      "type": "float",
+      "desc": "specific spb float number, e.g. 4.0"
+    }
   },
   "note_to_freq": {
-    "note": "specific a note name, e.g. C4"
+    "note": {
+      "type": "string",
+      "desc": "specific a note name, e.g. C4"
+    }
   },
   "freq_to_note": {
-    "frequency": "specific frequency float number, e.g. 261.63"
+    "freq": {
+      "type": "float",
+      "desc": "specific frequency float number without unit, ALWAYS as float number!. e.g. 261.63, '2kHz' transform to 2000.0"
+    }
   }
 }

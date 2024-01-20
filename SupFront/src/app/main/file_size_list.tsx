@@ -7,6 +7,11 @@ import {CallFileAction} from "@/app/api/route";
 import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 
+interface Resp {
+    result: Answer,
+    status_code: string
+}
+
 interface Answer {
     answer: FileSize[]
     total_size: string
@@ -74,7 +79,8 @@ export default function FileSizeList() {
                     params.set("action", "get_file_size_list")
                     params.set("recursively", isRecursively.toString())
                     CallFileAction(params).then(value => {
-                        const resp_content : Answer = JSON.parse(value)
+                        const resp: Resp = JSON.parse(value)
+                        const resp_content = resp.result
                         setTotalSize(resp_content.total_size)
                         const filesize_array : FileSize[] = resp_content.answer
                         console.log(filesize_array)
@@ -101,7 +107,8 @@ export default function FileSizeList() {
                     params.set("search", encodeURIComponent(searchName))
                     params.set("recursively", isRecursively.toString())
                     CallFileAction(params).then(value => {
-                        const resp_content : Answer = JSON.parse(value)
+                        const resp: Resp = JSON.parse(value)
+                        const resp_content = resp.result
                         setTotalSize(resp_content.total_size)
                         const filesize_array : FileSize[] = resp_content.answer
                         console.log(filesize_array)
