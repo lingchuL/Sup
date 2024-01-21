@@ -49,15 +49,17 @@ class RequestReceiver(object):
 	@staticmethod
 	def load_arg_from_dict(arg_name_list, arg_value_dict):
 		arg_dict = {}
+		print(arg_value_dict)
 		for arg_name in arg_name_list:
 			if arg_name in arg_value_dict:
-				arg_dict[arg_name] = arg_value_dict[arg_name]
+				# arg_dict[arg_name] = arg_value_dict[arg_name]
+				arg_dict[arg_name] = arg_value_dict.get(arg_name)
 			else:
 				arg_dict[arg_name] = ""
 		return arg_dict
 
 	def init_arg_dict(self):
-		self.arg_dict = self.load_arg_from_dict(self.arg_name_list, self.request_args)
+		self.arg_dict = self.load_arg_from_dict(self.arg_name_list, self.request.values)
 
 	def handle_action(self) -> Response:
 		"""

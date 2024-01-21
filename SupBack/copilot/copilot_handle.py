@@ -46,12 +46,13 @@ class Copilot(object):
 		func_result = self.func_handler.call_func(func_params_dict)
 		SupLogger.info(f"Copilot func_result: {func_result}")
 
-		# 美化结果
 		func_result_str = json.loads(func_result)["result"]
 
+		# 美化并返回结果
 		return self.polish(func_result_str)
 
 	def chat(self, message: str):
+		self.chat_handler.wake_up()
 		self.chat_handler.add_chat("user", message)
 		# chat_history_str = self.chat_handler.get_history_str()
 

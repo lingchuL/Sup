@@ -21,7 +21,7 @@ class DirFileReceiver(RequestReceiver):
 		}
 
 	def open_file(self):
-		path = self.arg_dict["path"]
+		path = self.unquote_arg(self.arg_dict["path"])
 		dir_file_handler = DirFileHandler()
 		dir_file_handler.open_explorer_and_select(path)
 		return self.form_result_dict("Finished")

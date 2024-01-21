@@ -69,7 +69,7 @@ def interact_audio_handle():
 	return receiver.handle_action()
 
 
-@app.route('/copilot', methods=["GET"])
+@app.route('/copilot', methods=["GET", "POST"])
 def copilot_handle():
 	print(request.args)
 

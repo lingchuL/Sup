@@ -9,6 +9,7 @@ class ChatHandler(object):
 	def __init__(self, in_setting=CopilotSetting()):
 		self.setting = in_setting
 		self.chat_msg_list = []
+		self.awake = False
 
 	def get_history_str(self):
 		chat_history = ""
@@ -23,8 +24,14 @@ class ChatHandler(object):
 		return system_msg + copy.deepcopy(self.chat_msg_list)
 
 	def add_chat(self, role, content):
+		if not self.awake:
+			return
 		self.chat_msg_list.append({"role": role, "content": content})
+
+	def wake_up(self):
+		self.awake = True
 
 	def end_chat(self):
 		print("flush chat")
 		self.chat_msg_list.clear()
+		self.awake = False
