@@ -44,7 +44,7 @@ def login():
 	return resp
 
 
-@app.route('/dir_file', methods=["GET"])
+@app.route('/dir_file', methods=["GET", "POST"])
 def dir_file():
 	print(request.args)
 	receiver = DirFileReceiver(request)

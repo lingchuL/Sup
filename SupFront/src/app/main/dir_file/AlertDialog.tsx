@@ -1,9 +1,9 @@
 'use client'
 import * as React from "react";
 import Button from "@mui/material/Button";
-import {CallFileAction, Get_Json} from "@/app/api/route";
+import {CallDirFileGet, Get_Json} from "@/app/api/route";
 import {Dialog, TextField} from "@mui/material";
-import FileSizeList from "@/app/main/file_size_list";
+import FileSizeList from "@/app/main/dir_file/file_size_list";
 import {useEffect} from "react";
 
 interface Resp {

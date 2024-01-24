@@ -3,7 +3,7 @@ import * as React from 'react';
 import {Divider, FormControlLabel, IconButton, Paper, TextField} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import Button from "@mui/material/Button";
-import {CallFileAction} from "@/app/api/route";
+import {CallDirFileGet} from "@/app/api/route";
 import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 
@@ -18,7 +18,7 @@ interface Answer {
     status: string
 }
 
-interface FileSize {
+export interface FileSize {
     file_full_path: string
     file_size: string
 }
@@ -26,7 +26,7 @@ interface FileSizeArray {
     filesize: FileSize[]
 }
 
-function FileList({filesize}: FileSizeArray) {
+export function FileListPage({filesize}: FileSizeArray) {
     // const [fileList, setFileList] = React.useState<FileSize[]>([]);
 
     return (
@@ -42,7 +42,7 @@ function FileList({filesize}: FileSizeArray) {
                         params.set("path", encodeURIComponent(file_size.file_full_path))
                         params.set("action", "open_file")
                         params.set("recursively", "false")
-                        CallFileAction(params).then((value)=>{
+                        CallDirFileGet(params).then((value)=>{
                             console.log(value)
                         })
                     }}>
@@ -78,7 +78,7 @@ export default function FileSizeList() {
                     params.set("path", encodeURIComponent(path))
                     params.set("action", "get_file_size_list")
                     params.set("recursively", isRecursively.toString())
-                    CallFileAction(params).then(value => {
+                    CallDirFileGet(params).then(value => {
                         const resp: Resp = JSON.parse(value)
                         const resp_content = resp.result
                         setTotalSize(resp_content.total_size)
@@ -106,7 +106,7 @@ export default function FileSizeList() {
                     params.set("action", "get_search_file_size_list")
                     params.set("search", encodeURIComponent(searchName))
                     params.set("recursively", isRecursively.toString())
-                    CallFileAction(params).then(value => {
+                    CallDirFileGet(params).then(value => {
                         const resp: Resp = JSON.parse(value)
                         const resp_content = resp.result
                         setTotalSize(resp_content.total_size)
@@ -125,7 +125,7 @@ export default function FileSizeList() {
                 <SearchIcon />
             </IconButton>
             <p>Total Size: {totalSize}</p>
-            <FileList filesize={fileArray}/>
+            <FileListPage filesize={fileArray}/>
 
         </Paper>
 

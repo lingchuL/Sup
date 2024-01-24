@@ -58,8 +58,12 @@ export async function ParamsPost(url_route: string, arg_params: Map<string, stri
     return data_text
 }
 
-export async function CallFileAction(params: Map<string, string>): Promise<string> {
+export async function CallDirFileGet(params: Map<string, string>): Promise<string> {
     return await ParamsGet("dir_file", params)
+}
+
+export async function CallDirFilePost(arg_params: Map<string, string>, form_params: FormData): Promise<string> {
+    return await ParamsPost("dir_file", arg_params, form_params)
 }
 
 export async function CallAudioAction(params: Map<string, string>): Promise<string> {

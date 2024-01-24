@@ -19,7 +19,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { secondaryListItems } from './sidebar';
-import AlertDialog from "@/app/main/AlertDialog";
+import AlertDialog from "@/app/main/dir_file/AlertDialog";
 import MainItems from "@/app/main/mainItems";
 
 function Copyright(props: any) {
