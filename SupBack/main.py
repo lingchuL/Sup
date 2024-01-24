@@ -20,9 +20,6 @@ from copilot.copilot_receiver import CopilotReceiver
 app = Flask(__name__)
 CORS(app)
 
-dir_file_handler = DirFileHandler()
-freq_note_trans = FreqNoteHandler()
-
 
 @app.route("/")
 def hello_world():
