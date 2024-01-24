@@ -1,3 +1,5 @@
+import os, sys, platform
+
 from subprocess import Popen, PIPE
 
 
@@ -25,6 +27,18 @@ class UtilHandler(object):
 		p.stdin.close()
 		p.wait()
 		return p.returncode
+
+	@staticmethod
+	def platform_system():
+		return platform.system()
+
+	@staticmethod
+	def is_windows():
+		return platform.system() == 'Windows'
+
+	@staticmethod
+	def in_linux():
+		return platform.system() == 'Linux'
 
 
 util_handler = UtilHandler()

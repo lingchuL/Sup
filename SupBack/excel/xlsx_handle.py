@@ -4,8 +4,11 @@ import math
 
 from openpyxl import Workbook, load_workbook
 
-from win32com.client import Dispatch
-import pythoncom
+from utils.util_handle import util_handler
+
+if util_handler.is_windows():
+	from win32com.client import Dispatch
+	import pythoncom
 
 from log_handle import SupLogger
 
@@ -121,7 +124,7 @@ class XlsxHandler(object):
 		cell_index = col + str(row_num)
 
 		self.ws_save[cell_index] = value
-			
+
 	def get_attr_names_of_cols(self, col_list: [str], row_num):
 		if self.ws is None:
 			return []
@@ -185,6 +188,8 @@ class XlsxHandler(object):
 		return self.attr_names[self.attr_columns.index(attr_col)]
 
 	def write_save_cell(self, col, row_num, value):
+		if not util_handler.is_windows():
+			return
 		pythoncom.CoInitialize()
 		xlsx_app = Dispatch("Excel.Application")
 		xlsx_app.Visible = False
@@ -204,6 +209,8 @@ class XlsxHandler(object):
 		:param attr_dict: 属性字典，key为可以找到对应列序号的属性名， value为属性值
 		:return:
 		"""
+		if not util_handler.is_windows():
+			return
 		pythoncom.CoInitialize()
 		xlsx_app = Dispatch("Excel.Application")
 		xlsx_app.Visible = False
@@ -220,6 +227,8 @@ class XlsxHandler(object):
 		SupLogger.info("excel saved")
 
 	def delete_win32com(self, row_num):
+		if not util_handler.is_windows():
+			return
 		pythoncom.CoInitialize()
 		xlsx_app = Dispatch("Excel.Application")
 		xlsx_app.Visible = False
