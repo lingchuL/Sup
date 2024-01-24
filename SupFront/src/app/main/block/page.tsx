@@ -2,14 +2,15 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import {EnvTreeCfgPage} from "@/app/main/config/env_tree"
+import {EnvTreeCfgPage} from "@/app/main/block/env_tree"
 import {Tab, Tabs, TextField} from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
-import {RPInteractAudioCfgPage} from "@/app/main/config/rp_interact_audio";
-import AudioSearch from "@/app/main/config/audio_resource_search";
-import AbilityAudioCfgPage from "@/app/main/config/ability_audio";
+import {RPInteractAudioCfgPage} from "@/app/main/block/rp_interact_audio";
+import AudioSearch from "@/app/main/block/audio_resource_search";
+import AbilityAudioCfgPage from "@/app/main/block/ability_audio";
 import {useState} from "react";
 import Grid from "@mui/material/Grid";
+import {PackageInstallPage} from "@/app/main/block/package_install";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -66,6 +67,7 @@ export default function BasicTabs() {
                     <Tab label="RP物品交互音效配置" {...a11yProps(1)} />
                     <Tab label="Ability音效配置" {...a11yProps(2)} />
                     <Tab label="AudioGPT" {...a11yProps(3)} />
+                    <Tab label="PackageInstall" {...a11yProps(4)} />
                 </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
@@ -79,6 +81,9 @@ export default function BasicTabs() {
             </CustomTabPanel>
             <CustomTabPanel value={value} index={3}>
                 <AudioSearch />
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={4}>
+                <PackageInstallPage />
             </CustomTabPanel>
         </Box>
     );

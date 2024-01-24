@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import * as React from "react";
 import {useState} from "react";
-import {Row, GetNewRows, formAttr, CfgProps, AttrProperty, AttrRowsArgs} from "@/app/main/config/audio_cfg";
+import {Row, GetNewRows, formAttr, CfgProps, AttrProperty, AttrRowsArgs} from "@/app/main/block/audio_cfg";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from '@mui/icons-material/Delete';
 

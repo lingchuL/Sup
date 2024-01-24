@@ -13,7 +13,7 @@ import {CallDirFileGet, CallCfgAudioAction} from "@/app/api/route";
 import SearchIcon from "@mui/icons-material/Search";
 import SaveIcon from '@mui/icons-material/Save';
 import {useState} from "react";
-import {CfgProps} from "@/app/main/config/audio_cfg";
+import {CfgProps} from "@/app/main/block/audio_cfg";
 
 interface Resp {
     result: Attr[]

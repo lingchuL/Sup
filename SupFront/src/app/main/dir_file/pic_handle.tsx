@@ -20,19 +20,6 @@ import {FileListPage, FileSize} from "@/app/main/dir_file/file_size_list";
 import Button from "@mui/material/Button";
 import {CallDirFilePost} from "@/app/api/route";
 
-function Copyright(props: any) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
-
 function DropFile() {
     const [dragOver, setDragOver] = useState(false)
     const [fileList, setFileList] = useState<FileSize[]>([])
@@ -94,5 +81,5 @@ export default function PicHandlePage() {
                 </Container>
             </Grid>
         </div>
-);
+    );
 }

@@ -5,6 +5,7 @@ from flask import Response
 from base_class.request_receiver import RequestReceiver
 from dir_file.dir_file_handle import DirFileHandler
 from dir_file.pic_handle import PicHandler
+from dir_file.adb_handle import ADBHandler
 
 
 class DirFileReceiver(RequestReceiver):
@@ -14,7 +15,8 @@ class DirFileReceiver(RequestReceiver):
 			"action",
 			"recursively",
 			"search",
-			"file_list"
+			"file_list",
+			"apk_path"
 		]
 
 	def init_action_func_dict(self):
@@ -22,7 +24,8 @@ class DirFileReceiver(RequestReceiver):
 			"open_file": self.open_file,
 			"get_file_size_list": self.get_file_size_list,
 			"get_search_file_size_list": self.get_search_file_size_list,
-			"transform_pic": self.transform_pic
+			"transform_pic": self.transform_pic,
+			"install_block": self.install_block,
 		}
 
 	def open_file(self):
@@ -73,3 +76,9 @@ class DirFileReceiver(RequestReceiver):
 			pic_handler.transform_to_png(file_full_path)
 
 		return self.form_result_dict("Finished")
+
+	def install_block(self):
+		apk_path = self.unquote_arg(self.arg_dict["apk_path"])
+		adb_handler = ADBHandler()
+		adb_handler.uninstall("com.block.jungojam")
+		adb_handler.install(apk_path)
