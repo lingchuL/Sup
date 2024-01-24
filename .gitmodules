@@ -1,0 +1,6 @@
+[submodule "SupBack"]
+	path = SupBack
+	url = https://github.com/lingchuL/SupBack.git
+[submodule "SupFront"]
+	path = SupFront
+	url = https://github.com/lingchuL/SupFront.git
