@@ -1,0 +1,48 @@
+{
+  "name": "sup-front",
+  "author": "lingchuL",
+  "description": "sup copilot frontend",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "next_start": "next start",
+    "start": "electron-forge start",
+    "electron": "electron .",
+    "lint": "next lint",
+    "dev_electron": "concurrently \"npm:dev\" \"npm:electron\"",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
+    "electron-squirrel-startup": "^1.0.0",
+    "recharts": "^2.10.2",
+    "next": "14.0.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-player": "^2.14.1",
+    "@mui/icons-material": "^5.14.18",
+    "@mui/material": "^5.14.18",
+    "capture-video-frame": "^1.0.0",
+    "@electron-forge/cli": "^7.3.0",
+    "@electron-forge/maker-deb": "^7.3.0",
+    "@electron-forge/maker-rpm": "^7.3.0",
+    "@electron-forge/maker-squirrel": "^7.3.0",
+    "@electron-forge/maker-zip": "^7.3.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.3.0",
+    "@electron-forge/plugin-fuses": "^7.3.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "concurrently": "^8.2.2",
+    "electron": "^28.1.0",
+    "typescript": "^5"
+  }
+}

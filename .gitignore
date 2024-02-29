@@ -1,0 +1,7 @@
+.next
+main.dist
+node_modules
+nvm-noinstall
+out
+venv
+.idea
