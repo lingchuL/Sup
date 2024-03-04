@@ -1,0 +1,13 @@
+.idea
+.next
+electron_out
+node_modules
+nvm-noinstall
+supback
+venv
+main.exe
+python310.dll
+select.pyd
+unicodedata.pyd
+vcruntime140.dll
+Sup.zip
