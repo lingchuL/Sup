@@ -4,3 +4,8 @@
 [submodule "SupFront"]
 	path = SupFront
 	url = https://github.com/lingchuL/SupFront.git
+	
+[submodule "SupFrontWeb"]
+	path = SupFrontWeb
+	url = http://shelterfuture.com/gogs/wangjunyi/SupFrontWeb.git
+	branch = master
