@@ -5,3 +5,7 @@
 [submodule "SupFrontWeb"]
 	path = SupFrontWeb
 	url = http://shelterfuture.com/gogs/wangjunyi/SupFrontWeb.git
+[submodule "SupBack"]
+	path = SupBack
+	url = http://shelterfuture.com/gogs/wangjunyi/SupBack.git
+	branch = master
