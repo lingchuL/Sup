@@ -1,7 +1,3 @@
-[submodule "SupBack"]
-	path = SupBack
-	url=http://shelterfuture.com/gogs/wangjunyi/SupBack.git
-	
 [submodule "SupFront"]
 	path = SupFront
 	url=http://shelterfuture.com/gogs/wangjunyi/SupFront.git
