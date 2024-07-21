@@ -1,11 +1,11 @@
 [submodule "SupBack"]
 	path = SupBack
-	url = https://github.com/lingchuL/SupBack.git
+	url=http://shelterfuture.com/gogs/wangjunyi/SupBack.git
+	
 [submodule "SupFront"]
 	path = SupFront
-	url = https://github.com/lingchuL/SupFront.git
+	url=http://shelterfuture.com/gogs/wangjunyi/SupFront.git
 	
 [submodule "SupFrontWeb"]
 	path = SupFrontWeb
 	url = http://shelterfuture.com/gogs/wangjunyi/SupFrontWeb.git
-	branch = master
