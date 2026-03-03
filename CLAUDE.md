@@ -36,7 +36,29 @@ npm run lint                       # ESLint 检查
 ```
 
 ### 构建发布 (SupBack/version/build_handle.py)
-后端通过 Nuitka 编译为 `supback.exe`，前端打包为 `.next` 和 Electron，产物输出到 `F:\_out\sup`。
+
+构建脚本位于 `SupBack/version/build_handle.py`，需在 supback conda 环境下运行，产物输出到 `F:\_out\sup`。
+
+**后端打包**（Nuitka 编译为 `supback.exe`，自动完成编译+压缩+上传+版本号更新）：
+```bash
+cd SupBack
+conda run -n supback python -m version.build_handle
+# 在 build_handle.py __main__ 中启用: BuildHandlerWin.build("back")
+```
+
+**前端打包**（需要先手动 build，再用 build_handle 打包上传）：
+```bash
+# 1. 先构建 .next
+cd SupFront
+npm run build
+
+# 2. 再打包上传
+cd ../SupBack
+conda run -n supback python -m version.build_handle
+# 在 build_handle.py __main__ 中启用: BuildHandlerWin.build(".next")
+```
+
+`build_handle.py` 的 `__main__` 块通过注释控制要执行的打包项，按需取消注释对应的 `BuildHandlerWin.build(...)` 行。`build(".next")` 流程：`next_copy()`（复制 .next 到输出目录并压缩为 .next.zip）→ `upload()`（上传到 TOS）→ `update_cloud_pak_ver()`（更新云端版本号）。
 
 ## Architecture
 
