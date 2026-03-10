@@ -115,6 +115,29 @@ class MyReceiver(RequestReceiver):
 2. **next** — npm run next_start (前端 port 3000)
 3. **electron** — Electron 桌面壳 (加载 localhost:3000)
 
+## JNPM 本地任务文件
+
+"更新单子到飞书" 脚本运行时，会同时将王军懿名下所有任务导出到本地固定文件，供其它项目（如 lumit SVN 自动提交）读取。
+
+- **文件路径**: `~/jnpm_my_tasks.txt`（即 `C:\Users\Admin\jnpm_my_tasks.txt`）
+- **编码**: UTF-8
+- **写入方式**: 完全覆盖
+- **格式**: 纯文本，每行一条任务：`周版本 #id 标题`
+  ```
+  2026-03-11版本 #93041 【通用】鬼屋搜撤玩法 音频
+  2026-03-04版本 #91396 【Play】咖啡厅骗子酒馆玩法 音频
+  ```
+- **筛选条件**: assignee（执行人）== 王军懿，覆盖近5个周版本
+- **代码位置**: `SupBack/plugins/copiper/jnpm/jnpm.py` → `JNPMHandler.save_my_tasks_to_local()`
+- **读取方式** (Python):
+  ```python
+  import os
+  tasks_file = os.path.join(os.path.expanduser("~"), "jnpm_my_tasks.txt")
+  with open(tasks_file, "r", encoding="utf-8") as f:
+      lines = f.read().strip().split("\n")
+  # lines: ["#12345 任务标题A", "#12346 任务标题B", ...]
+  ```
+
 ## Key Conventions
 
 - 后端端口固定 **8133**，前端端口固定 **3000**
