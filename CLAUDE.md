@@ -138,6 +138,22 @@ class MyReceiver(RequestReceiver):
   # lines: ["#12345 任务标题A", "#12346 任务标题B", ...]
   ```
 
+## 开发同步规则
+
+修改了 `SupBack/plugins/` 下的插件代码或 `SupBack/databases/plugins.jdb` 后，必须同步到正式运行目录，否则运行中的 supback 不会加载新代码。
+
+**同步插件代码**（改了 `plugins/copiper/` 下任何文件后执行）：
+```bash
+cd /d/GitDownload/Sup/SupBack && conda run -n supback python -c "from utils.util_utils import DirFileUtils; import os, shutil; app_dir = DirFileUtils.get_app_dir('supcopilot'); target = os.path.join(app_dir, 'plugins', 'copiper'); shutil.rmtree(target) if os.path.isdir(target) else None; DirFileUtils.copy_dir(os.path.join(os.getcwd(), 'plugins', 'copiper'), target, True); pycache = os.path.join(target, '__pycache__'); shutil.rmtree(pycache) if os.path.isdir(pycache) else None; print('done')"
+```
+
+**同步插件注册表**（改了 `databases/plugins.jdb` 后执行）：
+```bash
+cd /d/GitDownload/Sup/SupBack && conda run -n supback python -c "from utils.util_utils import DirFileUtils; import os, shutil; app_dir = DirFileUtils.get_app_dir('supcopilot'); shutil.copy2(os.path.join(os.getcwd(), 'databases', 'plugins.jdb'), os.path.join(app_dir, 'databases', 'plugins.jdb')); print('done')"
+```
+
+正式目录: `C:\Users\Admin\AppData\Local\supcopilot\`
+
 ## Key Conventions
 
 - 后端端口固定 **8133**，前端端口固定 **3000**
