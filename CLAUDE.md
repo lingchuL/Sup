@@ -48,17 +48,20 @@ conda run -n supback python -m version.build_handle
 
 **前端打包**（需要先手动 build，再用 build_handle 打包上传）：
 ```bash
-# 1. 先构建 .next
+# 1. 先构建 .next（若报 EPERM .next/trace，先 kill node 进程）
+taskkill //F //IM node.exe
 cd SupFront
 npm run build
 
-# 2. 再打包上传
+# 2. 取消注释 build_handle.py __main__ 中的 BuildHandlerWin.build(".next")，然后运行：
 cd ../SupBack
 conda run -n supback python -m version.build_handle
-# 在 build_handle.py __main__ 中启用: BuildHandlerWin.build(".next")
+# 运行完后将该行重新注释回去
 ```
 
-`build_handle.py` 的 `__main__` 块通过注释控制要执行的打包项，按需取消注释对应的 `BuildHandlerWin.build(...)` 行。`build(".next")` 流程：`next_copy()`（复制 .next 到输出目录并压缩为 .next.zip）→ `upload()`（上传到 TOS）→ `update_cloud_pak_ver()`（更新云端版本号）。
+`build_handle.py` 的 `__main__` 块通过注释控制要执行的打包项，按需取消注释对应的 `BuildHandlerWin.build(...)` 行，**运行后务必还原注释**。`build(".next")` 流程：`next_copy()`（复制 .next 到输出目录并压缩为 .next.zip）→ `upload()`（上传到 TOS）→ `update_cloud_pak_ver()`（更新云端版本号）。
+
+> 注意：`next_copy()` 等函数依赖 `__main__` 中定义的 `dev_next_dir`、`next_dir`、`out_dir` 模块级变量，不能脱离 `__main__` 直接调用。
 
 ## Architecture
 
