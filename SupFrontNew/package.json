@@ -1,0 +1,38 @@
+{
+  "name": "sup-front-new",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "next_start": "next start",
+    "start": "electron-forge start",
+    "electron": "electron .",
+    "dev_electron": "concurrently \"npm run dev\" \"npm run electron\"",
+    "start_electron": "concurrently \"npm run next_start\" \"npm run electron\"",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@handsontable/react": "^14.5.0",
+    "@supabase/supabase-js": "^2.100.1",
+    "clsx": "^2.1.1",
+    "handsontable": "^14.5.0",
+    "next": "14.2.35",
+    "react": "^18",
+    "react-dom": "^18",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

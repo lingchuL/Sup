@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+@layer base {
+  :root {
+    /* shadcn semantic tokens — CoPiper Light Theme */
+    --background: 0 0% 98%;
+    --foreground: 240 14% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 14% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 14% 11%;
+    --primary: 228 85% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 14% 11%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 7% 39%;
+    --accent: 240 4% 93%;
+    --accent-foreground: 240 14% 11%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 5% 92%;
+    --input: 240 4% 85%;
+    --ring: 228 85% 60%;
+    --radius: 0.375rem;
+
+    /* CoPiper custom tokens */
+    --cp-bg-base: #FAFAFA;
+    --cp-bg-sidebar: #F3F3F5;
+    --cp-bg-surface: #FFFFFF;
+    --cp-bg-elevated: #FFFFFF;
+    --cp-bg-hover: #EDEDF0;
+    --cp-bg-active: #E5E5EA;
+    --cp-border-subtle: #E8E8EC;
+    --cp-border-default: #D8D8DE;
+    --cp-border-strong: #C0C0CA;
+    --cp-text-primary: #1A1A22;
+    --cp-text-secondary: #5C5C6A;
+    --cp-text-tertiary: #9090A0;
+    --cp-accent: #4361EE;
+    --cp-accent-dim: rgba(67, 97, 238, 0.08);
+    --cp-accent-hover: #3451DE;
+    --cp-success: #16A34A;
+    --cp-warning: #D97706;
+    --cp-error: #DC2626;
+    --cp-info: #2563EB;
+    --cp-titlebar-height: 38px;
+    --cp-sidebar-width: 208px;
+
+    --sidebar: 240 5% 96%;
+    --sidebar-foreground: 240 14% 11%;
+    --sidebar-primary: 228 85% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4% 93%;
+    --sidebar-accent-foreground: 240 14% 11%;
+    --sidebar-border: 240 5% 92%;
+    --sidebar-ring: 228 85% 60%;
+  }
+
+  .dark {
+    --background: 240 10% 4%;
+    --foreground: 240 7% 94%;
+    --card: 240 6% 8%;
+    --card-foreground: 240 7% 94%;
+    --popover: 240 6% 10%;
+    --popover-foreground: 240 7% 94%;
+    --primary: 228 85% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 6% 10%;
+    --secondary-foreground: 240 7% 94%;
+    --muted: 240 6% 10%;
+    --muted-foreground: 240 5% 57%;
+    --accent: 240 8% 16%;
+    --accent-foreground: 240 7% 94%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 5% 18%;
+    --input: 240 5% 18%;
+    --ring: 228 85% 60%;
+
+    --cp-bg-base: #09090B;
+    --cp-bg-sidebar: #0F0F12;
+    --cp-bg-surface: #141418;
+    --cp-bg-elevated: #1A1A1F;
+    --cp-bg-hover: #1F1F25;
+    --cp-bg-active: #25252C;
+    --cp-border-subtle: #1E1E24;
+    --cp-border-default: #27272F;
+    --cp-border-strong: #333340;
+    --cp-text-primary: #ECECF0;
+    --cp-text-secondary: #8A8A99;
+    --cp-text-tertiary: #5C5C6A;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    user-select: none;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--cp-border-default); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cp-border-strong); }
+
+/* Electron */
+.electron-dragable { -webkit-app-region: drag; }
+.electron-undragable { -webkit-app-region: no-drag; }
+
+/* Mono Font */
+.font-mono { font-family: 'Fira Code', 'Consolas', monospace; }

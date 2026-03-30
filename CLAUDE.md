@@ -46,6 +46,12 @@ conda run -n supback python -m version.build_handle
 # 在 build_handle.py __main__ 中启用: BuildHandlerWin.build("back")
 ```
 
+**CoPiper 插件打包**（复制+压缩+上传+版本号更新，一步完成）：
+```bash
+cd SupBack
+conda run -n supback python version/_tmp_build_copiper.py
+```
+
 **前端打包**（需要先手动 build，再用 build_handle 打包上传）：
 ```bash
 # 1. 先构建 .next（若报 EPERM .next/trace，先 kill node 进程）
