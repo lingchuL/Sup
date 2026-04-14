@@ -37,19 +37,19 @@ npm run lint                       # ESLint 检查
 
 ### 构建发布 (SupBack/version/build_handle.py)
 
-构建脚本位于 `SupBack/version/build_handle.py`，需在 supback conda 环境下运行，产物输出到 `F:\_out\sup`。
+构建脚本位于 `SupBack/version/build_handle.py`，需在 uv 环境下运行，产物输出到 `F:\_out\sup`。
 
 **后端打包**（Nuitka 编译为 `supback.exe`，自动完成编译+压缩+上传+版本号更新）：
 ```bash
 cd SupBack
-conda run -n supback python -m version.build_handle
+uv run python -m version.build_handle
 # 在 build_handle.py __main__ 中启用: BuildHandlerWin.build("back")
 ```
 
 **CoPiper 插件打包**（复制+压缩+上传+版本号更新，一步完成）：
 ```bash
 cd SupBack
-conda run -n supback python version/_tmp_build_copiper.py
+uv run python version/_tmp_build_copiper.py
 ```
 
 **前端打包**（需要先手动 build，再用 build_handle 打包上传）：
@@ -61,7 +61,7 @@ npm run build
 
 # 2. 取消注释 build_handle.py __main__ 中的 BuildHandlerWin.build(".next")，然后运行：
 cd ../SupBack
-conda run -n supback python -m version.build_handle
+uv run python -m version.build_handle
 # 运行完后将该行重新注释回去
 ```
 
@@ -153,12 +153,12 @@ class MyReceiver(RequestReceiver):
 
 **同步插件代码**（改了 `plugins/copiper/` 下任何文件后执行）：
 ```bash
-cd /d/GitDownload/Sup/SupBack && conda run -n supback python -c "from utils.util_utils import DirFileUtils; import os, shutil; app_dir = DirFileUtils.get_app_dir('supcopilot'); target = os.path.join(app_dir, 'plugins', 'copiper'); shutil.rmtree(target) if os.path.isdir(target) else None; DirFileUtils.copy_dir(os.path.join(os.getcwd(), 'plugins', 'copiper'), target, True); pycache = os.path.join(target, '__pycache__'); shutil.rmtree(pycache) if os.path.isdir(pycache) else None; print('done')"
+cd /d/GitDownload/Sup/SupBack && uv run python -c "from utils.util_utils import DirFileUtils; import os, shutil; app_dir = DirFileUtils.get_app_dir('supcopilot'); target = os.path.join(app_dir, 'plugins', 'copiper'); shutil.rmtree(target) if os.path.isdir(target) else None; DirFileUtils.copy_dir(os.path.join(os.getcwd(), 'plugins', 'copiper'), target, True); pycache = os.path.join(target, '__pycache__'); shutil.rmtree(pycache) if os.path.isdir(pycache) else None; print('done')"
 ```
 
 **同步插件注册表**（改了 `databases/plugins.jdb` 后执行）：
 ```bash
-cd /d/GitDownload/Sup/SupBack && conda run -n supback python -c "from utils.util_utils import DirFileUtils; import os, shutil; app_dir = DirFileUtils.get_app_dir('supcopilot'); shutil.copy2(os.path.join(os.getcwd(), 'databases', 'plugins.jdb'), os.path.join(app_dir, 'databases', 'plugins.jdb')); print('done')"
+cd /d/GitDownload/Sup/SupBack && uv run python -c "from utils.util_utils import DirFileUtils; import os, shutil; app_dir = DirFileUtils.get_app_dir('supcopilot'); shutil.copy2(os.path.join(os.getcwd(), 'databases', 'plugins.jdb'), os.path.join(app_dir, 'databases', 'plugins.jdb')); print('done')"
 ```
 
 正式目录: `C:\Users\Admin\AppData\Local\supcopilot\`
